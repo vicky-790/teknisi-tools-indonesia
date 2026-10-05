@@ -1,36 +1,45 @@
-TEKNISI TOOLS V1.3.1 — MOBILE RESPONSIVE FIX
+TEKNISI TOOLS INDONESIA — V1.5 CONTENT GROWTH
 
-FIX:
-- Dashboard tidak lagi dipaksa width 720px di HP
-- Tidak ada sisi kiri/kanan yang terpotong
-- Sidebar desktop berubah menjadi tab horizontal di HP
-- Tab dashboard dapat digeser kiri/kanan
-- KPI cards dapat di-swipe horizontal
-- Quick Tools dapat di-swipe horizontal
-- Chart mengikuti lebar layar
-- Recent Activity turun ke bawah pada mobile
-- Desktop layout tetap menggunakan sidebar
+LIVE BASE URL
+https://teknisi-tools-indonesia.pages.dev/
 
-TEST:
-cd /sdcard/Download
-unzip Teknisi-Tools-Indonesia-V1.3.1-Mobile-Fix.zip
-cd teknisi-tools-v1.3.1-mobile-fix
-python -m http.server 8080
+WHAT'S NEW
+- 7 original SEO knowledge guides (Electrical, MCB, cable, voltage drop, energy, HVAC, 3 phase)
+- Internal links from 7 calculators to the relevant guide
+- Homepage knowledge section + upgraded Knowledge index
+- Article + Breadcrumb structured data
+- Sitemap expanded to 26 public URLs with lastmod 2026-10-06
+- Google Search Console verification file preserved
+- Analytics-ready loader added (disabled by default until an ID/token is configured)
+- Service worker cache bumped to tti-v15
 
-Buka:
-http://localhost:8080
+IMPORTANT
+Do not delete google8bd1361f6dbe3d51.html while the Search Console URL-prefix property is in use.
 
-PENTING:
-Jika tampilan lama masih muncul, hapus site data/cache localhost:8080 sekali,
-karena V1.3 memakai Service Worker.
+ANALYTICS
+assets/analytics.js contains two empty values:
+  ga4MeasurementId: ''
+  cloudflareToken: ''
+Leave them empty if you do not want analytics yet. Search Console will still report Google search performance after data becomes available.
 
+DEPLOY OVER CURRENT LOCAL GIT REPO
+1. Put this ZIP in /sdcard/Download
+2. cd /sdcard/Download
+3. unzip -o Teknisi-Tools-Indonesia-V1.5-Content-Growth.zip
+4. cd teknisi-tools-v1.3.1-mobile-fix
+5. git status
+6. git add .
+7. git commit -m "V1.5 Content Growth"
+8. git push
 
-=== V1.4 SEO PRODUCTION ===
-Live base URL: https://teknisi-tools-indonesia.pages.dev
-SEO: canonical, unique metadata, Open Graph, JSON-LD, robots.txt, populated sitemap.xml, favicon.
-After deploy: open /sitemap.xml, then add the site to Google Search Console and submit sitemap.xml. Use URL Inspection to request indexing for the homepage and priority tools. Indexing/ranking is not guaranteed or instant.
+Cloudflare Pages should auto-deploy from GitHub main.
 
-Update from Termux (inside repo):
-git add .
-git commit -m "V1.4 SEO Production"
-git push
+POST DEPLOY CHECK
+- /
+- /pages/artikel.html
+- /articles/cara-menghitung-watt-ke-ampere.html
+- /sitemap.xml
+- /google8bd1361f6dbe3d51.html
+
+SEO NOTE
+Do not repeatedly request indexing for every URL. Keep the sitemap submitted in Search Console and prioritize homepage + strongest pages when manual request quota is available.
