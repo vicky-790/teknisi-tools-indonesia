@@ -1,0 +1,8 @@
+{
+  "name": "Teknisi Tools Indonesia",
+  "short_name": "TeknisiTools",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020713",
+  "theme_color": "#020713"
+}
