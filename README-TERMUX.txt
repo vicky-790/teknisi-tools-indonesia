@@ -23,3 +23,14 @@ http://localhost:8080
 PENTING:
 Jika tampilan lama masih muncul, hapus site data/cache localhost:8080 sekali,
 karena V1.3 memakai Service Worker.
+
+
+=== V1.4 SEO PRODUCTION ===
+Live base URL: https://teknisi-tools-indonesia.pages.dev
+SEO: canonical, unique metadata, Open Graph, JSON-LD, robots.txt, populated sitemap.xml, favicon.
+After deploy: open /sitemap.xml, then add the site to Google Search Console and submit sitemap.xml. Use URL Inspection to request indexing for the homepage and priority tools. Indexing/ranking is not guaranteed or instant.
+
+Update from Termux (inside repo):
+git add .
+git commit -m "V1.4 SEO Production"
+git push

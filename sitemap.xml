@@ -1,1 +1,22 @@
-<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/pages/tools.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/pages/panduan.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/pages/artikel.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/pages/tentang.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/pages/kontak.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/pages/privacy.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/pages/disclaimer.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/pages/terms.html</loc><changefreq>weekly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/tools/watt-ampere.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/tools/va-watt.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/tools/mcb.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/tools/cable-size.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/tools/voltage-drop.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/tools/kwh.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/tools/ac-pk.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/tools/three-phase.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/tools/runtime.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://teknisi-tools-indonesia.pages.dev/tools/shift.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+</urlset>
