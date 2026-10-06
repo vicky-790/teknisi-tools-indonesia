@@ -4,20 +4,10 @@ const ALLOWED = new Set([
   'tools_click','knowledge_click','pwa_install','cta_click','site_search',
   'geo_granted','geo_denied','geo_unavailable'
 ]);
-const BASE_SCHEMA = `
-CREATE TABLE IF NOT EXISTS analytics_events (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  created_at TEXT NOT NULL,
-  day_jakarta TEXT NOT NULL,
-  event_type TEXT NOT NULL,
-  path TEXT NOT NULL,
-  label TEXT NOT NULL DEFAULT '',
-  session_id TEXT NOT NULL DEFAULT ''
-);
+const BASE_SCHEMA = `CREATE TABLE IF NOT EXISTS analytics_events (id INTEGER PRIMARY KEY AUTOINCREMENT,created_at TEXT NOT NULL,day_jakarta TEXT NOT NULL,event_type TEXT NOT NULL,path TEXT NOT NULL,label TEXT NOT NULL DEFAULT '',session_id TEXT NOT NULL DEFAULT '');
 CREATE INDEX IF NOT EXISTS idx_analytics_day ON analytics_events(day_jakarta);
-CREATE INDEX IF NOT EXISTS idx_analytics_type_day ON analytics_events(event_type, day_jakarta);
-CREATE INDEX IF NOT EXISTS idx_analytics_path_type ON analytics_events(path, event_type);
-`;
+CREATE INDEX IF NOT EXISTS idx_analytics_type_day ON analytics_events(event_type,day_jakarta);
+CREATE INDEX IF NOT EXISTS idx_analytics_path_type ON analytics_events(path,event_type);`;
 const EXTRA_COLUMNS = {
   country:"TEXT NOT NULL DEFAULT ''",region:"TEXT NOT NULL DEFAULT ''",city:"TEXT NOT NULL DEFAULT ''",
   continent:"TEXT NOT NULL DEFAULT ''",cf_timezone:"TEXT NOT NULL DEFAULT ''",device_type:"TEXT NOT NULL DEFAULT ''",
@@ -34,7 +24,11 @@ async function ready(db){
   const info=await db.prepare('PRAGMA table_info(analytics_events)').all();
   const present=new Set((info.results||[]).map(r=>r.name));
   for(const [name,type] of Object.entries(EXTRA_COLUMNS)){if(!present.has(name))await db.exec(`ALTER TABLE analytics_events ADD COLUMN ${name} ${type};`)}
-  await db.exec(`CREATE INDEX IF NOT EXISTS idx_analytics_geo ON analytics_events(country,region,city);CREATE INDEX IF NOT EXISTS idx_analytics_source ON analytics_events(source,medium);CREATE INDEX IF NOT EXISTS idx_analytics_device ON analytics_events(device_type,browser,os);CREATE INDEX IF NOT EXISTS idx_analytics_landing ON analytics_events(landing_path);CREATE INDEX IF NOT EXISTS idx_analytics_coords ON analytics_events(approx_lat,approx_lon);`);
+  await db.exec(`CREATE INDEX IF NOT EXISTS idx_analytics_geo ON analytics_events(country,region,city);
+CREATE INDEX IF NOT EXISTS idx_analytics_source ON analytics_events(source,medium);
+CREATE INDEX IF NOT EXISTS idx_analytics_device ON analytics_events(device_type,browser,os);
+CREATE INDEX IF NOT EXISTS idx_analytics_landing ON analytics_events(landing_path);
+CREATE INDEX IF NOT EXISTS idx_analytics_coords ON analytics_events(approx_lat,approx_lon);`);
   schemaReady=true;
 }
 function parseUA(ua){ua=String(ua||'');let browser='Other';if(/SamsungBrowser\//i.test(ua))browser='Samsung Internet';else if(/EdgA?\//i.test(ua))browser='Edge';else if(/OPR\//i.test(ua))browser='Opera';else if(/CriOS\//i.test(ua)||/Chrome\//i.test(ua))browser='Chrome';else if(/FxiOS\//i.test(ua)||/Firefox\//i.test(ua))browser='Firefox';else if(/Safari\//i.test(ua)&&/Version\//i.test(ua))browser='Safari';let os='Other';if(/Android/i.test(ua))os='Android';else if(/iPhone|iPad|iPod/i.test(ua))os='iOS/iPadOS';else if(/Windows NT/i.test(ua))os='Windows';else if(/Macintosh|Mac OS X/i.test(ua))os='macOS';else if(/Linux/i.test(ua))os='Linux';let device='Desktop';if(/iPad|Tablet|Nexus 7|Nexus 10|SM-T|Tab/i.test(ua))device='Tablet';else if(/Mobi|Android|iPhone|iPod/i.test(ua))device='Mobile';return{browser,os,device}}
