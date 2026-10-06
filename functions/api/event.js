@@ -66,5 +66,9 @@ export async function onRequest(context){
     await db.prepare(`INSERT INTO analytics_events (created_at,day_jakarta,event_type,path,label,session_id,country,region,city,continent,cf_timezone,device_type,browser,os,referrer_host,source,medium,landing_path,approx_lat,approx_lon,gps_lat,gps_lon,gps_accuracy,gps_permission) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
       .bind(iso,day,event,path,label,session,country,region,city,continent,cfTimezone,ua.device,ua.browser,ua.os,referrerHost,traffic.source,traffic.medium,landing||path,approxLat,approxLon,gpsLat,gpsLon,gpsAccuracy,gpsPermission).run();
     return json({ok:true,geo:event.startsWith('geo_')?gpsPermission:undefined},202);
-  }catch(e){console.error('analytics storage error',stage,e);return json({ok:false,error:'storage_error',stage},500)}
+  }catch(e){
+    console.error('analytics storage error',stage,e);
+    const detail=String(e&&e.message?e.message:e).slice(0,200);
+    return json({ok:false,error:'storage_error',stage,detail},500)
+  }
 }
