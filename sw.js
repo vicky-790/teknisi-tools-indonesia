@@ -1,4 +1,4 @@
-const CACHE = 'tti-v191-canonical-fix';
+const CACHE = 'tti-v20-civil-estimator';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js'];
 
 self.addEventListener('install', event => {
