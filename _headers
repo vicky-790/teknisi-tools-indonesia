@@ -20,3 +20,7 @@
 /pages/statistik.html
   Cache-Control: no-cache, no-store, must-revalidate
   X-Robots-Tag: noindex, nofollow
+
+/pages/statistik
+  Cache-Control: no-cache, no-store, must-revalidate
+  X-Robots-Tag: noindex, nofollow
