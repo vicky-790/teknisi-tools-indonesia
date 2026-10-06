@@ -1,71 +1,31 @@
-let schemaReady = false;
-const SCHEMA = `
-CREATE TABLE IF NOT EXISTS analytics_events (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  created_at TEXT NOT NULL,
-  day_jakarta TEXT NOT NULL,
-  event_type TEXT NOT NULL,
-  path TEXT NOT NULL,
-  label TEXT NOT NULL DEFAULT '',
-  session_id TEXT NOT NULL DEFAULT ''
-);
-CREATE INDEX IF NOT EXISTS idx_analytics_day ON analytics_events(day_jakarta);
-CREATE INDEX IF NOT EXISTS idx_analytics_type_day ON analytics_events(event_type, day_jakarta);
-CREATE INDEX IF NOT EXISTS idx_analytics_path_type ON analytics_events(path, event_type);
-`;
-function json(data,status=200){
-  return new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store, max-age=0','X-Robots-Tag':'noindex'}});
-}
-async function ready(db){ if(!schemaReady){ await db.exec(SCHEMA); schemaReady=true; } }
-function jktDay(offsetDays=0){
-  return new Date(Date.now()+7*3600*1000+offsetDays*86400000).toISOString().slice(0,10);
-}
-export async function onRequest(context){
-  if(context.request.method!=='GET') return json({ok:false,error:'method_not_allowed'},405);
-  const db=context.env.ANALYTICS_DB;
-  if(!db) return json({ok:false,error:'analytics_db_not_configured',setup:true},503);
-  try{
-    await ready(db);
-    const today=jktDay(0), start=jktDay(-13);
-    const qToday=db.prepare(`SELECT
-      COUNT(*) AS events,
-      COUNT(DISTINCT CASE WHEN session_id<>'' THEN session_id END) AS active_sessions,
-      SUM(CASE WHEN event_type='calculate' THEN 1 ELSE 0 END) AS calculations,
-      SUM(CASE WHEN event_type='copy_result' THEN 1 ELSE 0 END) AS copies,
-      SUM(CASE WHEN event_type='article_open' THEN 1 ELSE 0 END) AS articles,
-      SUM(CASE WHEN event_type='calculator_open' THEN 1 ELSE 0 END) AS tool_opens
-      FROM analytics_events WHERE day_jakarta=?`).bind(today).first();
-    const qAll=db.prepare(`SELECT
-      COUNT(*) AS events,
-      COUNT(DISTINCT CASE WHEN session_id<>'' THEN session_id END) AS sessions,
-      SUM(CASE WHEN event_type='calculate' THEN 1 ELSE 0 END) AS calculations,
-      SUM(CASE WHEN event_type='copy_result' THEN 1 ELSE 0 END) AS copies,
-      SUM(CASE WHEN event_type='article_open' THEN 1 ELSE 0 END) AS articles
-      FROM analytics_events`).first();
-    const qTools=db.prepare(`SELECT path, MAX(label) AS label, COUNT(*) AS uses
-      FROM analytics_events WHERE event_type='calculate'
-      GROUP BY path ORDER BY uses DESC LIMIT 10`).all();
-    const qArticles=db.prepare(`SELECT path, MAX(label) AS label, COUNT(*) AS views
-      FROM analytics_events WHERE event_type='article_open'
-      GROUP BY path ORDER BY views DESC LIMIT 10`).all();
-    const qDaily=db.prepare(`SELECT day_jakarta AS day,
-      COUNT(DISTINCT CASE WHEN session_id<>'' THEN session_id END) AS sessions,
-      SUM(CASE WHEN event_type='calculate' THEN 1 ELSE 0 END) AS calculations,
-      SUM(CASE WHEN event_type='copy_result' THEN 1 ELSE 0 END) AS copies,
-      SUM(CASE WHEN event_type='article_open' THEN 1 ELSE 0 END) AS articles,
-      SUM(CASE WHEN event_type='calculator_open' THEN 1 ELSE 0 END) AS tool_opens
-      FROM analytics_events WHERE day_jakarta>=?
-      GROUP BY day_jakarta ORDER BY day_jakarta ASC`).bind(start).all();
-    const qRecent=db.prepare(`SELECT created_at,event_type,path,label
-      FROM analytics_events ORDER BY id DESC LIMIT 20`).all();
-    const [todayRow,allRow,tools,articles,daily,recent]=await Promise.all([qToday,qAll,qTools,qArticles,qDaily,qRecent]);
-    return json({
-      ok:true,
-      timezone:'Asia/Jakarta',
-      generatedAt:new Date().toISOString(),
-      today:todayRow||{}, allTime:allRow||{},
-      topTools:tools.results||[], topArticles:articles.results||[],
-      daily:daily.results||[], recent:recent.results||[]
-    });
-  }catch(e){ return json({ok:false,error:'stats_error'},500); }
-}
+let schemaReady=false;
+const BASE_SCHEMA=`CREATE TABLE IF NOT EXISTS analytics_events(id INTEGER PRIMARY KEY AUTOINCREMENT,created_at TEXT NOT NULL,day_jakarta TEXT NOT NULL,event_type TEXT NOT NULL,path TEXT NOT NULL,label TEXT NOT NULL DEFAULT '',session_id TEXT NOT NULL DEFAULT '');CREATE INDEX IF NOT EXISTS idx_analytics_day ON analytics_events(day_jakarta);CREATE INDEX IF NOT EXISTS idx_analytics_type_day ON analytics_events(event_type,day_jakarta);CREATE INDEX IF NOT EXISTS idx_analytics_path_type ON analytics_events(path,event_type);`;
+const EXTRA_COLUMNS={country:"TEXT NOT NULL DEFAULT ''",region:"TEXT NOT NULL DEFAULT ''",city:"TEXT NOT NULL DEFAULT ''",continent:"TEXT NOT NULL DEFAULT ''",cf_timezone:"TEXT NOT NULL DEFAULT ''",device_type:"TEXT NOT NULL DEFAULT ''",browser:"TEXT NOT NULL DEFAULT ''",os:"TEXT NOT NULL DEFAULT ''",referrer_host:"TEXT NOT NULL DEFAULT ''",source:"TEXT NOT NULL DEFAULT ''",medium:"TEXT NOT NULL DEFAULT ''",landing_path:"TEXT NOT NULL DEFAULT ''",approx_lat:"REAL",approx_lon:"REAL",gps_lat:"REAL",gps_lon:"REAL",gps_accuracy:"REAL",gps_permission:"TEXT NOT NULL DEFAULT ''"};
+function json(data,status=200){return new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store, max-age=0','X-Robots-Tag':'noindex'}})}
+async function ready(db){if(schemaReady)return;await db.exec(BASE_SCHEMA);const info=await db.prepare('PRAGMA table_info(analytics_events)').all(),present=new Set((info.results||[]).map(r=>r.name));for(const [n,t]of Object.entries(EXTRA_COLUMNS)){if(!present.has(n))await db.exec(`ALTER TABLE analytics_events ADD COLUMN ${n} ${t};`)}await db.exec(`CREATE INDEX IF NOT EXISTS idx_analytics_geo ON analytics_events(country,region,city);CREATE INDEX IF NOT EXISTS idx_analytics_source ON analytics_events(source,medium);CREATE INDEX IF NOT EXISTS idx_analytics_device ON analytics_events(device_type,browser,os);CREATE INDEX IF NOT EXISTS idx_analytics_landing ON analytics_events(landing_path);CREATE INDEX IF NOT EXISTS idx_analytics_coords ON analytics_events(approx_lat,approx_lon);`);schemaReady=true}
+function jktDay(o=0){return new Date(Date.now()+7*3600000+o*86400000).toISOString().slice(0,10)}
+export async function onRequest(context){if(context.request.method!=='GET')return json({ok:false,error:'method_not_allowed'},405);const db=context.env.ANALYTICS_DB;if(!db)return json({ok:false,error:'analytics_db_not_configured',setup:true},503);const u=new URL(context.request.url),wantPrivate=u.searchParams.get('private')==='1',secret=String(context.env.STATS_TOKEN||''),given=String(context.request.headers.get('x-stats-token')||'');if(wantPrivate&&!secret)return json({ok:false,error:'stats_token_not_configured',adminSetup:true},503);if(wantPrivate&&given!==secret)return json({ok:false,error:'unauthorized'},401);
+try{await ready(db);const today=jktDay(),start=jktDay(-13);if(wantPrivate)await db.prepare("UPDATE analytics_events SET gps_lat=NULL,gps_lon=NULL,gps_accuracy=NULL WHERE gps_lat IS NOT NULL AND julianday(created_at)<julianday('now','-7 days')").run();
+const queries=[
+ db.prepare(`SELECT COUNT(*) events,COUNT(DISTINCT CASE WHEN session_id<>'' THEN session_id END) active_sessions,SUM(event_type='page_view') page_views,SUM(event_type='calculate') calculations,SUM(event_type='copy_result') copies,SUM(event_type='article_open') articles,SUM(event_type='calculator_open') tool_opens,COUNT(DISTINCT CASE WHEN country<>'' THEN country END) countries,SUM(event_type='geo_granted') gps_grants FROM analytics_events WHERE day_jakarta=?`).bind(today).first(),
+ db.prepare(`SELECT COUNT(*) events,COUNT(DISTINCT CASE WHEN session_id<>'' THEN session_id END) sessions,SUM(event_type='page_view') page_views,SUM(event_type='calculate') calculations,SUM(event_type='copy_result') copies,SUM(event_type='article_open') articles,SUM(event_type='geo_granted') gps_grants FROM analytics_events`).first(),
+ db.prepare(`SELECT path,MAX(label) label,COUNT(*) uses FROM analytics_events WHERE event_type='calculate' GROUP BY path ORDER BY uses DESC LIMIT 10`).all(),
+ db.prepare(`SELECT path,MAX(label) label,COUNT(*) views FROM analytics_events WHERE event_type='article_open' GROUP BY path ORDER BY views DESC LIMIT 10`).all(),
+ db.prepare(`SELECT day_jakarta day,COUNT(DISTINCT CASE WHEN session_id<>'' THEN session_id END) sessions,SUM(event_type='page_view') page_views,SUM(event_type='calculate') calculations,SUM(event_type='copy_result') copies,SUM(event_type='article_open') articles,SUM(event_type='calculator_open') tool_opens FROM analytics_events WHERE day_jakarta>=? GROUP BY day_jakarta ORDER BY day_jakarta`).bind(start).all(),
+ db.prepare(`SELECT country,COUNT(DISTINCT session_id) sessions FROM analytics_events WHERE country<>'' AND session_id<>'' GROUP BY country ORDER BY sessions DESC LIMIT 10`).all(),
+ db.prepare(`SELECT country,region,city,COUNT(DISTINCT session_id) sessions FROM analytics_events WHERE city<>'' AND session_id<>'' GROUP BY country,region,city ORDER BY sessions DESC LIMIT 10`).all(),
+ db.prepare(`SELECT device_type name,COUNT(DISTINCT session_id) sessions FROM analytics_events WHERE device_type<>'' AND session_id<>'' GROUP BY device_type ORDER BY sessions DESC LIMIT 10`).all(),
+ db.prepare(`SELECT browser name,COUNT(DISTINCT session_id) sessions FROM analytics_events WHERE browser<>'' AND session_id<>'' GROUP BY browser ORDER BY sessions DESC LIMIT 10`).all(),
+ db.prepare(`SELECT os name,COUNT(DISTINCT session_id) sessions FROM analytics_events WHERE os<>'' AND session_id<>'' GROUP BY os ORDER BY sessions DESC LIMIT 10`).all(),
+ db.prepare(`SELECT source,medium,MAX(referrer_host) referrer_host,COUNT(DISTINCT session_id) sessions FROM analytics_events WHERE source<>'' AND session_id<>'' GROUP BY source,medium ORDER BY sessions DESC LIMIT 12`).all(),
+ db.prepare(`SELECT landing_path path,COUNT(DISTINCT session_id) sessions FROM analytics_events WHERE landing_path<>'' AND session_id<>'' GROUP BY landing_path ORDER BY sessions DESC LIMIT 10`).all(),
+ db.prepare(`SELECT label term,COUNT(*) searches FROM analytics_events WHERE event_type='site_search' AND label<>'' GROUP BY label ORDER BY searches DESC LIMIT 10`).all(),
+ db.prepare(`SELECT created_at,event_type,path,label FROM analytics_events ORDER BY id DESC LIMIT 24`).all()
+];const [tr,ar,tools,articles,daily,countries,cities,devices,browsers,oses,sources,landing,searches,recent]=await Promise.all(queries);
+const out={ok:true,timezone:'Asia/Jakarta',generatedAt:new Date().toISOString(),privacy:{rawIpStored:false,identityStored:false,fullReferrerStored:false,networkCoordinatesRounded:true,preciseGpsOptIn:true,preciseGpsRetentionDays:7},today:tr||{},allTime:ar||{},topTools:tools.results||[],topArticles:articles.results||[],daily:daily.results||[],countries:countries.results||[],cities:cities.results||[],devices:devices.results||[],browsers:browsers.results||[],operatingSystems:oses.results||[],sources:sources.results||[],landingPages:landing.results||[],internalSearches:searches.results||[],recent:recent.results||[],geoPrivate:false};
+if(wantPrivate){const [approx,gps,consent]=await Promise.all([
+ db.prepare(`SELECT approx_lat lat,approx_lon lon,MAX(city) city,MAX(region) region,MAX(country) country,COUNT(DISTINCT session_id) sessions FROM analytics_events WHERE approx_lat IS NOT NULL AND approx_lon IS NOT NULL GROUP BY approx_lat,approx_lon ORDER BY sessions DESC LIMIT 120`).all(),
+ db.prepare(`SELECT session_id,gps_lat lat,gps_lon lon,gps_accuracy accuracy,created_at,city,region,country,source,device_type FROM analytics_events WHERE event_type='geo_granted' AND gps_lat IS NOT NULL AND gps_lon IS NOT NULL ORDER BY id DESC LIMIT 100`).all(),
+ db.prepare(`SELECT gps_permission permission,COUNT(*) count FROM analytics_events WHERE gps_permission<>'' GROUP BY gps_permission ORDER BY count DESC`).all()
+]);out.geoPrivate=true;out.networkPoints=approx.results||[];out.precisePoints=(gps.results||[]).map((r,i)=>({...r,sessionHint:'ANON-'+String(r.session_id||'').replace(/-/g,'').slice(0,6).toUpperCase(),session_id:undefined}));out.geoConsent=consent.results||[]}
+return json(out)}catch(e){return json({ok:false,error:'stats_error'},500)}}

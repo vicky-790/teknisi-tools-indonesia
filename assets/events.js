@@ -1,59 +1,20 @@
-/* Teknisi Tools Indonesia V1.7 — anonymous custom usage analytics.
-   Stores only event name, page path, short label, timestamp, and a temporary
-   random session ID. Calculator inputs/results are never sent. */
+/* Teknisi Tools Indonesia V1.7.2 — anonymous events + dual geolocation.
+   Network location is derived server-side by Cloudflare. Precise GPS is OPTIONAL,
+   requested only after an explicit click, and never required to use the calculators. */
 (function(){
-  'use strict';
-  if (navigator.doNotTrack === '1' || window.doNotTrack === '1') return;
-  if (navigator.webdriver) return;
+'use strict';
+if(navigator.doNotTrack==='1'||window.doNotTrack==='1'||navigator.webdriver)return;
+var API='/api/event',path=location.pathname||'/',label=(document.querySelector('h1')?.textContent||document.title||path).trim().slice(0,120),sid='',meta={landing:path,referrerHost:'',utmSource:'',utmMedium:''};
+try{sid=sessionStorage.getItem('tti_session_id')||'';if(!sid){sid=(crypto.randomUUID?crypto.randomUUID():'s-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));sessionStorage.setItem('tti_session_id',sid)}var saved=sessionStorage.getItem('tti_session_meta');if(saved){var parsed=JSON.parse(saved);if(parsed&&typeof parsed==='object')meta=Object.assign(meta,parsed)}else{var ref='';try{ref=document.referrer?new URL(document.referrer).hostname:''}catch(e){}var qs=new URLSearchParams(location.search);meta={landing:path,referrerHost:String(ref||'').slice(0,120),utmSource:String(qs.get('utm_source')||'').slice(0,60),utmMedium:String(qs.get('utm_medium')||'').slice(0,40)};if(!meta.utmSource&&qs.get('gclid')){meta.utmSource='google';meta.utmMedium='cpc'}if(!meta.utmSource&&qs.get('msclkid')){meta.utmSource='bing';meta.utmMedium='cpc'}if(!meta.utmSource&&qs.get('fbclid')){meta.utmSource='facebook';meta.utmMedium='social'}sessionStorage.setItem('tti_session_meta',JSON.stringify(meta))}}catch(e){sid='s-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)}
+function send(eventName,extraLabel,extra){var payload={event:eventName,path:path.slice(0,220),label:String(extraLabel||label||'').slice(0,120),session:sid.slice(0,80),landing:String(meta.landing||path).slice(0,220),referrerHost:String(meta.referrerHost||'').slice(0,120),utmSource:String(meta.utmSource||'').slice(0,60),utmMedium:String(meta.utmMedium||'').slice(0,40)};if(extra&&typeof extra==='object')Object.assign(payload,extra);var body=JSON.stringify(payload);try{if(navigator.sendBeacon){var blob=new Blob([body],{type:'application/json'});if(navigator.sendBeacon(API,blob))return}}catch(e){}fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:body,keepalive:true,credentials:'same-origin'}).catch(function(){})}
+window.TTITrack=send;send('page_view');if(path.indexOf('/tools/')===0)send('calculator_open');else if(path.indexOf('/articles/')===0)send('article_open');
+document.addEventListener('click',function(e){var el=e.target.closest('a,button');if(!el)return;var txt=(el.textContent||'').replace(/\s+/g,' ').trim(),href=(el.getAttribute('href')||'');if(el.tagName==='BUTTON'&&/calculate|hitung/i.test(txt))send('calculate');if(el.tagName==='BUTTON'&&/copy result|salin/i.test(txt))send('copy_result');if(href==='/pages/tools.html'||href.endsWith('/pages/tools.html'))send('tools_click','Tools');if(href==='/pages/artikel.html'||href.endsWith('/pages/artikel.html'))send('knowledge_click','Knowledge');if(el.classList.contains('navbtn')||/consult|konsult|contact|hubungi/i.test(txt))send('cta_click',txt.slice(0,120))},{passive:true});
+document.addEventListener('keydown',function(e){if(e.key!=='Enter')return;var el=e.target;if(!el||!(el.matches('input[type="search"],input[data-site-search]')))return;var term=String(el.value||'').replace(/\s+/g,' ').trim().slice(0,80);if(term)send('site_search',term)});window.addEventListener('appinstalled',function(){send('pwa_install','PWA installed')});
 
-  var API='/api/event';
-  var path=location.pathname || '/';
-  var label=(document.querySelector('h1')?.textContent || document.title || path).trim().slice(0,120);
-  var sid='';
-  try {
-    sid=sessionStorage.getItem('tti_session_id') || '';
-    if(!sid){
-      sid=(crypto.randomUUID ? crypto.randomUUID() : 's-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2));
-      sessionStorage.setItem('tti_session_id',sid);
-    }
-  } catch(e) {
-    sid='s-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2);
-  }
-
-  function send(eventName, extraLabel){
-    var body=JSON.stringify({
-      event:eventName,
-      path:path.slice(0,200),
-      label:String(extraLabel || label || '').slice(0,120),
-      session:sid.slice(0,80)
-    });
-    try {
-      if(navigator.sendBeacon){
-        var blob=new Blob([body],{type:'application/json'});
-        if(navigator.sendBeacon(API,blob)) return;
-      }
-    } catch(e) {}
-    fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:body,keepalive:true,credentials:'same-origin'}).catch(function(){});
-  }
-
-  window.TTITrack=send;
-
-  // One page-level semantic event per load.
-  if(path.indexOf('/tools/')===0) send('calculator_open');
-  else if(path.indexOf('/articles/')===0) send('article_open');
-
-  document.addEventListener('click',function(e){
-    var el=e.target.closest('a,button');
-    if(!el) return;
-    var txt=(el.textContent||'').replace(/\s+/g,' ').trim();
-    var href=(el.getAttribute('href')||'');
-
-    if(el.tagName==='BUTTON' && /calculate|hitung/i.test(txt)) send('calculate');
-    if(el.tagName==='BUTTON' && /copy result|salin/i.test(txt)) send('copy_result');
-    if(href==='/pages/tools.html' || href.endsWith('/pages/tools.html')) send('tools_click','Tools');
-    if(href==='/pages/artikel.html' || href.endsWith('/pages/artikel.html')) send('knowledge_click','Knowledge');
-    if(el.classList.contains('navbtn') || /consult|konsult|contact|hubungi/i.test(txt)) send('cta_click',txt.slice(0,120));
-  },{passive:true});
-
-  window.addEventListener('appinstalled',function(){ send('pwa_install','PWA installed'); });
+function now(){return Date.now()}function get(k){try{return localStorage.getItem(k)||''}catch(e){return''}}function set(k,v){try{localStorage.setItem(k,String(v))}catch(e){}}
+function locate(auto){if(!navigator.geolocation||!window.isSecureContext)return;var opts={enableHighAccuracy:true,timeout:12000,maximumAge:300000};navigator.geolocation.getCurrentPosition(function(pos){set('tti_geo_choice','granted');set('tti_geo_last_sent',now());send('geo_granted','Precise location allowed',{gpsLat:Number(pos.coords.latitude.toFixed(5)),gpsLon:Number(pos.coords.longitude.toFixed(5)),gpsAccuracy:Number(pos.coords.accuracy.toFixed(1))});removePrompt()},function(err){if(err&&err.code===1){set('tti_geo_choice','denied');send('geo_denied','Precise location denied')}else send('geo_unavailable','Precise location unavailable');removePrompt()},opts)}
+function removePrompt(){var el=document.getElementById('ttiGeoPrompt');if(el)el.remove()}
+function showPrompt(){if(document.getElementById('ttiGeoPrompt'))return;var box=document.createElement('aside');box.id='ttiGeoPrompt';box.className='geoConsent';box.setAttribute('role','dialog');box.setAttribute('aria-label','Izin lokasi presisi opsional');box.innerHTML='<div class="geoConsentIcon">◎</div><div class="geoConsentText"><b>Lokasi presisi opsional</b><span>Jika Anda memilih Izinkan GPS, browser akan meminta izin. Koordinat presisi + akurasi dipakai untuk statistik area dan disimpan maksimal 7 hari. Kalkulator tetap berfungsi tanpa GPS.</span><a href="/pages/privacy.html">Baca Privacy</a></div><div class="geoConsentActions"><button type="button" class="geoAllow">Izinkan GPS</button><button type="button" class="geoLater">Tidak sekarang</button></div>';document.body.appendChild(box);box.querySelector('.geoAllow').onclick=function(){locate(false)};box.querySelector('.geoLater').onclick=function(){set('tti_geo_prompt_at',now());removePrompt()}}
+function geoBoot(){if(!navigator.geolocation||!window.isSecureContext)return;var choice=get('tti_geo_choice'),last=Number(get('tti_geo_last_sent')||0),promptAt=Number(get('tti_geo_prompt_at')||0);if(choice==='granted'){if(now()-last>86400000){if(navigator.permissions&&navigator.permissions.query){navigator.permissions.query({name:'geolocation'}).then(function(p){if(p.state==='granted')locate(true);else if(p.state==='prompt')showPrompt();else set('tti_geo_choice','denied')}).catch(function(){showPrompt()})}else showPrompt()}return}if(choice==='denied')return;if(promptAt&&now()-promptAt<30*86400000)return;setTimeout(showPrompt,1800)}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',geoBoot);else geoBoot();
 })();

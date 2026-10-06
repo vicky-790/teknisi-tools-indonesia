@@ -1,81 +1,87 @@
-TEKNISI TOOLS INDONESIA — V1.6 INDEX BOOST
+TEKNISI TOOLS INDONESIA — V1.7.2 DUAL GEO ANALYTICS
 
 LIVE BASE URL
 https://teknisi-tools-indonesia.pages.dev/
 
-STATUS BEFORE THIS RELEASE
-- Homepage confirmed by Google Search Console as Submitted and indexed.
-- Priority inner pages were still reported as URL is unknown to Google when checked on 2026-10-06.
-- sitemap.xml had 0 warnings and 0 errors, but was still pending at that check.
-
 WHAT'S NEW
-- Visible breadcrumbs on tool, article and core pages.
-- BreadcrumbList structured data added to all 10 calculator pages and core pages.
-- Meta descriptions added to calculator and core pages that previously relied only on Open Graph descriptions.
-- Related-calculation clusters added to every calculator page.
-- Related-guide clusters added to all 7 engineering articles.
-- Stronger internal linking between Tools ↔ Knowledge ↔ related calculations.
-- Homepage Popular Technical Paths section creates direct crawl paths to priority tool/article pairs.
-- New HTML sitemap at /pages/sitemap.html as an additional crawl/navigation hub.
-- XML sitemap expanded from 26 to 27 public URLs.
-- Google verification file preserved.
-- Cloudflare/analytics integration preserved.
-- V1.5.1 network-first navigation fix preserved.
-- Service worker cache bumped to tti-v16-indexboost.
+- Keeps V1.7.1 anonymous usage analytics, device/source/landing intelligence.
+- Network-based geolocation from Cloudflare request metadata:
+  country, region, city, latitude, longitude, timezone when available.
+- Network coordinates are rounded and are APPROXIMATE, not GPS.
+- Optional precise browser GPS:
+  * never requested automatically before a clear in-site consent action
+  * visitor must tap “Izinkan GPS”, then approve the browser permission prompt
+  * latitude / longitude / accuracy are stored only after approval
+  * calculator still works normally when GPS is refused
+  * GPS fields older than 7 days are cleared on the next analytics API activity
+- Private map in /pages/statistik.html:
+  * approximate network points
+  * precise GPS opt-in points
+  * exact coordinates are NOT exposed by the public stats API
+  * Geo View requires a Cloudflare secret named STATS_TOKEN
+- Privacy page includes location disclosure and a reset-preference control.
 
-IMPORTANT
-Do not delete google8bd1361f6dbe3d51.html while the Search Console URL-prefix property is in use.
+PRIVACY DESIGN
+- NO raw IP stored by the custom analytics database.
+- NO name, email, phone, account identity, calculator inputs/results.
+- NO full referrer URL/query string.
+- Search queries from Google remain aggregate-only in Google Search Console.
+- Precise GPS requires explicit permission and uses short retention: GPS fields older than 7 days are purged on subsequent analytics activity.
+- Network/IP geolocation can be inaccurate due to ISP/mobile network/VPN.
+
+BACKEND
+Cloudflare Pages Functions + D1
+Required D1 binding: ANALYTICS_DB
+Required private dashboard secret: STATS_TOKEN
+
+D1 SETUP — ONLY IF ANALYTICS_DB IS NOT ALREADY CONNECTED
+1. Cloudflare Dashboard -> Workers & Pages -> teknisi-tools-indonesia.
+2. Create a D1 database, for example: teknisi-tools-analytics.
+3. Project -> Settings -> Bindings -> Add -> D1 database binding.
+4. Variable name MUST be: ANALYTICS_DB
+5. Select the database and save.
+6. Redeploy after adding the binding.
+7. The first API request auto-creates/auto-migrates the schema.
+
+IF V1.7 / V1.7.1 D1 IS ALREADY CONNECTED
+DO NOT create a second database. Keep ANALYTICS_DB. V1.7.2 automatically
+adds approx_lat, approx_lon, gps_lat, gps_lon, gps_accuracy and gps_permission.
+Existing rows stay valid; old rows simply have empty coordinate fields.
+
+CREATE PRIVATE GEO DASHBOARD TOKEN
+1. Project -> Settings -> Variables and Secrets -> Add.
+2. Name: STATS_TOKEN
+3. Set it as a secret with a strong random value (recommended 32+ random chars).
+4. Save and redeploy if Cloudflare asks.
+5. DO NOT put this token in GitHub/source and DO NOT send it in chat/screenshots.
+6. Open /pages/statistik.html and enter the token in “Private Geo View”.
+   The browser keeps it only in sessionStorage for the current tab/session.
+
+GENERATE A RANDOM TOKEN IN TERMUX (OPTIONAL)
+python -c "import secrets; print(secrets.token_urlsafe(32))"
 
 DEPLOY OVER CURRENT LOCAL GIT REPO
-1. Put Teknisi-Tools-Indonesia-V1.6-Index-Boost.zip in /sdcard/Download
+1. Put Teknisi-Tools-Indonesia-V1.7.2-Dual-Geo-Analytics.zip in /sdcard/Download
 2. cd /sdcard/Download
-3. unzip -o Teknisi-Tools-Indonesia-V1.6-Index-Boost.zip
+3. unzip -o Teknisi-Tools-Indonesia-V1.7.2-Dual-Geo-Analytics.zip
 4. cd teknisi-tools-v1.3.1-mobile-fix
-5. git status
-6. git add .
-7. git commit -m "V1.6 Index Boost"
-8. git push
+5. git add .
+6. git commit -m "V1.7.2 Dual Geo Analytics"
+7. git push
 
-POST DEPLOY CHECK
-- /
-- /pages/tools.html
-- /pages/artikel.html
-- /pages/sitemap.html
-- /tools/watt-ampere.html
-- /articles/cara-menghitung-watt-ke-ampere.html
-- /sitemap.xml
-- /google8bd1361f6dbe3d51.html
+TEST AFTER CLOUDFLARE DEPLOY
+A. Public analytics:
+   https://teknisi-tools-indonesia.pages.dev/pages/statistik.html
+B. Open the homepage in a normal browser. The optional location panel appears.
+C. Tap “Izinkan GPS” only for a test device you control; accept browser permission.
+D. Return to Statistics -> Private Geo View -> enter STATS_TOKEN.
+E. The map should show:
+   - rounded Network location points
+   - Precise GPS opt-in point with accuracy when consent was granted
 
-AFTER DEPLOY
-Re-submit the existing sitemap in Search Console so Google is prompted to refetch the updated 27-URL sitemap. Do not repeatedly request manual indexing for the same URL.
-
-
-========================================================
-V1.7 CUSTOM ANALYTICS + DASHBOARD STATISTIK
-========================================================
-Frontend event tracker: /assets/events.js
-Event API:             /api/event
-Stats API:             /api/stats
-Dashboard:             /pages/statistik.html
-Backend:               Cloudflare Pages Functions + D1
-Required D1 binding:   ANALYTICS_DB
-
-PRIVACY:
-Custom analytics DOES NOT send calculator input values or calculation results.
-It records only event type, page path, short page label, timestamp, and a
-random temporary session ID. Cloudflare Web Analytics can continue running
-alongside this custom analytics.
-
-CLOUDFLARE SETUP AFTER GIT DEPLOY:
-1. Cloudflare Dashboard -> Workers & Pages -> teknisi-tools-indonesia.
-2. Create a D1 database, suggested name: teknisi-tools-analytics.
-3. In the Pages project Settings/Bindings, add a D1 binding.
-4. Variable/binding name MUST be: ANALYTICS_DB
-5. Select the D1 database created in step 2 and save.
-6. Trigger a new deployment if Cloudflare asks for one.
-7. Open https://teknisi-tools-indonesia.pages.dev/pages/statistik.html
-8. The first API request automatically creates the required D1 table/indexes.
-No SQL paste is required.
-
-If dashboard shows "Database belum terhubung", the code is already deployed;
-only the ANALYTICS_DB D1 binding is still missing or not active on production.
+IMPORTANT
+- GPS only works in secure contexts (the Pages HTTPS domain is secure).
+- Browser/OS permission settings can still block location.
+- Do not interpret Cloudflare network coordinates as a home address.
+- Do not claim Google keyword data belongs to a specific visitor; Search Console
+  intentionally reports organic queries in aggregate.

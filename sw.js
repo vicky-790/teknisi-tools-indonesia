@@ -1,13 +1,11 @@
-const CACHE = 'tti-v17-analytics';
-const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js'];
+const CACHE = 'tti-v172-dual-geo';
+const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js'];
 
 self.addEventListener('install', event => {
   self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE).then(async cache => {
-      await Promise.allSettled(CORE.map(url => cache.add(url)));
-    })
-  );
+  event.waitUntil(caches.open(CACHE).then(async cache => {
+    await Promise.allSettled(CORE.map(url => cache.add(url)));
+  }));
 });
 
 self.addEventListener('activate', event => {
@@ -21,14 +19,10 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const request = event.request;
   if (request.method !== 'GET') return;
-
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
-
-  // API responses must always come from Pages Functions/D1, never Cache Storage.
   if (url.pathname.startsWith('/api/')) return;
 
-  // HTML/navigation: network first so menu pages always use the current deployment.
   if (request.mode === 'navigate' || request.destination === 'document') {
     event.respondWith((async () => {
       try {
@@ -43,16 +37,12 @@ self.addEventListener('fetch', event => {
         if (cached) return cached;
         const home = await caches.match('/');
         if (home) return home;
-        return new Response('Offline. Please reconnect and try again.', {
-          status: 503,
-          headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-        });
+        return new Response('Offline. Please reconnect and try again.', {status:503,headers:{'Content-Type':'text/plain; charset=utf-8'}});
       }
     })());
     return;
   }
 
-  // Static assets: cache first, then network. Never reject respondWith.
   event.respondWith((async () => {
     const cached = await caches.match(request);
     if (cached) return cached;
