@@ -48,3 +48,34 @@ POST DEPLOY CHECK
 
 AFTER DEPLOY
 Re-submit the existing sitemap in Search Console so Google is prompted to refetch the updated 27-URL sitemap. Do not repeatedly request manual indexing for the same URL.
+
+
+========================================================
+V1.7 CUSTOM ANALYTICS + DASHBOARD STATISTIK
+========================================================
+Frontend event tracker: /assets/events.js
+Event API:             /api/event
+Stats API:             /api/stats
+Dashboard:             /pages/statistik.html
+Backend:               Cloudflare Pages Functions + D1
+Required D1 binding:   ANALYTICS_DB
+
+PRIVACY:
+Custom analytics DOES NOT send calculator input values or calculation results.
+It records only event type, page path, short page label, timestamp, and a
+random temporary session ID. Cloudflare Web Analytics can continue running
+alongside this custom analytics.
+
+CLOUDFLARE SETUP AFTER GIT DEPLOY:
+1. Cloudflare Dashboard -> Workers & Pages -> teknisi-tools-indonesia.
+2. Create a D1 database, suggested name: teknisi-tools-analytics.
+3. In the Pages project Settings/Bindings, add a D1 binding.
+4. Variable/binding name MUST be: ANALYTICS_DB
+5. Select the D1 database created in step 2 and save.
+6. Trigger a new deployment if Cloudflare asks for one.
+7. Open https://teknisi-tools-indonesia.pages.dev/pages/statistik.html
+8. The first API request automatically creates the required D1 table/indexes.
+No SQL paste is required.
+
+If dashboard shows "Database belum terhubung", the code is already deployed;
+only the ANALYTICS_DB D1 binding is still missing or not active on production.

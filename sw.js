@@ -1,5 +1,5 @@
-const CACHE = 'tti-v16-indexboost';
-const CORE = ['/', '/assets/style.css', '/assets/analytics.js'];
+const CACHE = 'tti-v17-analytics';
+const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js'];
 
 self.addEventListener('install', event => {
   self.skipWaiting();
@@ -24,6 +24,9 @@ self.addEventListener('fetch', event => {
 
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
+
+  // API responses must always come from Pages Functions/D1, never Cache Storage.
+  if (url.pathname.startsWith('/api/')) return;
 
   // HTML/navigation: network first so menu pages always use the current deployment.
   if (request.mode === 'navigate' || request.destination === 'document') {
