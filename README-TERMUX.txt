@@ -1,52 +1,50 @@
-TEKNISI TOOLS INDONESIA — V1.5 CONTENT GROWTH
+TEKNISI TOOLS INDONESIA — V1.6 INDEX BOOST
 
 LIVE BASE URL
 https://teknisi-tools-indonesia.pages.dev/
 
+STATUS BEFORE THIS RELEASE
+- Homepage confirmed by Google Search Console as Submitted and indexed.
+- Priority inner pages were still reported as URL is unknown to Google when checked on 2026-10-06.
+- sitemap.xml had 0 warnings and 0 errors, but was still pending at that check.
+
 WHAT'S NEW
-- 7 original SEO knowledge guides (Electrical, MCB, cable, voltage drop, energy, HVAC, 3 phase)
-- Internal links from 7 calculators to the relevant guide
-- Homepage knowledge section + upgraded Knowledge index
-- Article + Breadcrumb structured data
-- Sitemap expanded to 26 public URLs with lastmod 2026-10-06
-- Google Search Console verification file preserved
-- Analytics-ready loader added (disabled by default until an ID/token is configured)
-- Service worker cache bumped to tti-v15
+- Visible breadcrumbs on tool, article and core pages.
+- BreadcrumbList structured data added to all 10 calculator pages and core pages.
+- Meta descriptions added to calculator and core pages that previously relied only on Open Graph descriptions.
+- Related-calculation clusters added to every calculator page.
+- Related-guide clusters added to all 7 engineering articles.
+- Stronger internal linking between Tools ↔ Knowledge ↔ related calculations.
+- Homepage Popular Technical Paths section creates direct crawl paths to priority tool/article pairs.
+- New HTML sitemap at /pages/sitemap.html as an additional crawl/navigation hub.
+- XML sitemap expanded from 26 to 27 public URLs.
+- Google verification file preserved.
+- Cloudflare/analytics integration preserved.
+- V1.5.1 network-first navigation fix preserved.
+- Service worker cache bumped to tti-v16-indexboost.
 
 IMPORTANT
 Do not delete google8bd1361f6dbe3d51.html while the Search Console URL-prefix property is in use.
 
-ANALYTICS
-assets/analytics.js contains two empty values:
-  ga4MeasurementId: ''
-  cloudflareToken: ''
-Leave them empty if you do not want analytics yet. Search Console will still report Google search performance after data becomes available.
-
 DEPLOY OVER CURRENT LOCAL GIT REPO
-1. Put this ZIP in /sdcard/Download
+1. Put Teknisi-Tools-Indonesia-V1.6-Index-Boost.zip in /sdcard/Download
 2. cd /sdcard/Download
-3. unzip -o Teknisi-Tools-Indonesia-V1.5-Content-Growth.zip
+3. unzip -o Teknisi-Tools-Indonesia-V1.6-Index-Boost.zip
 4. cd teknisi-tools-v1.3.1-mobile-fix
 5. git status
 6. git add .
-7. git commit -m "V1.5 Content Growth"
+7. git commit -m "V1.6 Index Boost"
 8. git push
-
-Cloudflare Pages should auto-deploy from GitHub main.
 
 POST DEPLOY CHECK
 - /
+- /pages/tools.html
 - /pages/artikel.html
+- /pages/sitemap.html
+- /tools/watt-ampere.html
 - /articles/cara-menghitung-watt-ke-ampere.html
 - /sitemap.xml
 - /google8bd1361f6dbe3d51.html
 
-SEO NOTE
-Do not repeatedly request indexing for every URL. Keep the sitemap submitted in Search Console and prioritize homepage + strongest pages when manual request quota is available.
-
-
-V1.5.1 Navigation Fix
-- Fix ERR_FAILED saat membuka Tools/Knowledge akibat service-worker navigation handling.
-- HTML navigation sekarang network-first dengan cache fallback.
-- sw.js dipaksa no-cache agar update cepat.
-- Analytics V1.5 tetap dipertahankan.
+AFTER DEPLOY
+Re-submit the existing sitemap in Search Console so Google is prompted to refetch the updated 27-URL sitemap. Do not repeatedly request manual indexing for the same URL.

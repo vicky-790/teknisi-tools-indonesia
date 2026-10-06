@@ -1,4 +1,4 @@
-const CACHE = 'tti-v151-navfix';
+const CACHE = 'tti-v16-indexboost';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js'];
 
 self.addEventListener('install', event => {
