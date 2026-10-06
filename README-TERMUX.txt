@@ -43,3 +43,10 @@ POST DEPLOY CHECK
 
 SEO NOTE
 Do not repeatedly request indexing for every URL. Keep the sitemap submitted in Search Console and prioritize homepage + strongest pages when manual request quota is available.
+
+
+V1.5.1 Navigation Fix
+- Fix ERR_FAILED saat membuka Tools/Knowledge akibat service-worker navigation handling.
+- HTML navigation sekarang network-first dengan cache fallback.
+- sw.js dipaksa no-cache agar update cepat.
+- Analytics V1.5 tetap dipertahankan.

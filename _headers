@@ -1,0 +1,11 @@
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/pages/*
+  Cache-Control: no-cache
+
+/tools/*
+  Cache-Control: no-cache
+
+/articles/*
+  Cache-Control: no-cache
