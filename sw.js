@@ -1,4 +1,4 @@
-const CACHE = 'tti-v172-dual-geo';
+const CACHE = 'tti-v1721-tracking-fix';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js'];
 
 self.addEventListener('install', event => {
