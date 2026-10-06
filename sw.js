@@ -1,4 +1,4 @@
-const CACHE = 'tti-v18-growth';
+const CACHE = 'tti-v181-index-boost';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js'];
 
 self.addEventListener('install', event => {
