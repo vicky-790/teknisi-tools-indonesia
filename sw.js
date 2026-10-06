@@ -1,5 +1,5 @@
-const CACHE = 'tti-v1725-persistent-admin';
-const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js'];
+const CACHE = 'tti-v18-growth';
+const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js'];
 
 self.addEventListener('install', event => {
   self.skipWaiting();

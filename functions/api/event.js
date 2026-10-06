@@ -2,7 +2,7 @@ let schemaReady = false;
 const ALLOWED = new Set([
   'page_view','calculator_open','calculate','copy_result','article_open',
   'tools_click','knowledge_click','pwa_install','cta_click','site_search',
-  'geo_granted','geo_denied','geo_unavailable'
+  'geo_granted','geo_denied','geo_unavailable','affiliate_click'
 ]);
 const BASE_SCHEMA=`CREATE TABLE IF NOT EXISTS analytics_events(id INTEGER PRIMARY KEY AUTOINCREMENT,created_at TEXT NOT NULL,day_jakarta TEXT NOT NULL,event_type TEXT NOT NULL,path TEXT NOT NULL,label TEXT NOT NULL DEFAULT '',session_id TEXT NOT NULL DEFAULT '');CREATE INDEX IF NOT EXISTS idx_analytics_day ON analytics_events(day_jakarta);CREATE INDEX IF NOT EXISTS idx_analytics_type_day ON analytics_events(event_type,day_jakarta);CREATE INDEX IF NOT EXISTS idx_analytics_path_type ON analytics_events(path,event_type);`;
 const EXTRA_COLUMNS = {
@@ -42,20 +42,13 @@ export async function onRequest(context){
     gpsLat=rounded(finite(data.gpsLat,-90,90),5);gpsLon=rounded(finite(data.gpsLon,-180,180),5);gpsAccuracy=rounded(finite(data.gpsAccuracy,0,100000),1);
     if(gpsLat===null||gpsLon===null)return json({ok:false,error:'invalid_gps'},400);gpsPermission='granted';
   }else if(event==='geo_denied')gpsPermission='denied';else if(event==='geo_unavailable')gpsPermission='unavailable';
-  let stage='schema';
   try{
     await ready(db);
-    stage='retention_cleanup';
     const cutoff=new Date(Date.now()-7*86400000).toISOString();
     await db.prepare("UPDATE analytics_events SET gps_lat=NULL,gps_lon=NULL,gps_accuracy=NULL WHERE gps_lat IS NOT NULL AND created_at < ?").bind(cutoff).run();
-    stage='insert';
     const now=new Date(),iso=now.toISOString(),day=new Date(now.getTime()+7*3600*1000).toISOString().slice(0,10);
     await db.prepare(`INSERT INTO analytics_events (created_at,day_jakarta,event_type,path,label,session_id,country,region,city,continent,cf_timezone,device_type,browser,os,referrer_host,source,medium,landing_path,approx_lat,approx_lon,gps_lat,gps_lon,gps_accuracy,gps_permission) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
       .bind(iso,day,event,path,label,session,country,region,city,continent,cfTimezone,ua.device,ua.browser,ua.os,referrerHost,traffic.source,traffic.medium,landing||path,approxLat,approxLon,gpsLat,gpsLon,gpsAccuracy,gpsPermission).run();
     return json({ok:true,geo:event.startsWith('geo_')?gpsPermission:undefined},202);
-  }catch(e){
-    console.error('analytics storage error',stage,e);
-    const detail=String(e&&e.message?e.message:e).slice(0,200);
-    return json({ok:false,error:'storage_error',stage,detail},500)
-  }
+  }catch(e){return json({ok:false,error:'storage_error'},500)}
 }

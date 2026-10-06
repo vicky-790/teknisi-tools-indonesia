@@ -1,0 +1,27 @@
+Teknisi Tools Indonesia V1.8 — SEO Growth + Monetization Ready
+Date: 2026-10-06
+
+SEO / CONTENT
+- Added 6 original long-tail engineering guides (13 total).
+- Added live Knowledge search.
+- Added RSS feed.xml.
+- Rebuilt XML + HTML sitemaps.
+- Added Editorial & Methodology page.
+- Added 404 page.
+- Strengthened internal linking.
+
+MONETIZATION READINESS
+- Added monetization-config.js + monetization.js.
+- AdSense and affiliate remain OFF until real IDs/URLs are configured.
+- Added responsive hidden ad placements on home, tools, and articles.
+- Added ads.txt placeholder (no fake publisher ID).
+- Added Monetization Disclosure page.
+- Affiliate links use rel=sponsored when enabled.
+- Added anonymous affiliate_click event support.
+
+PRESERVED
+- V1.7.2.5 persistent admin sessions.
+- D1 custom analytics and visitor sessions.
+- Dual geo network/GPS opt-in analytics.
+- Google Search Console verification file.
+- Cloudflare Web Analytics compatibility.

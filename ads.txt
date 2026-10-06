@@ -1,0 +1,2 @@
+# V1.8 placeholder. Replace/add the exact authorized seller line copied from your ad network after account approval.
+# Example format only (DO NOT use as your ID): google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0

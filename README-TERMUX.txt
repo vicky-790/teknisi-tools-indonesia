@@ -85,3 +85,27 @@ IMPORTANT
 - Do not interpret Cloudflare network coordinates as a home address.
 - Do not claim Google keyword data belongs to a specific visitor; Search Console
   intentionally reports organic queries in aggregate.
+
+
+=== V1.8 SEO GROWTH + MONETIZATION READY ===
+- 6 artikel long-tail baru (total 13 guide)
+- Knowledge live search + RSS feed
+- Editorial/methodology + monetization disclosure
+- monetization-config.js + monetization.js: ads/affiliate OFF by default
+- ads.txt placeholder only; replace with exact line from AdSense after account approval
+- Never invent/fake ca-pub ID or ad slot ID.
+- Custom Analytics/D1/Persistent Admin preserved.
+
+ADSense AFTER APPROVAL:
+1) Edit assets/monetization-config.js
+2) Set adsenseClient to your real ca-pub-XXXXXXXXXXXXXXXX
+3) Set real numeric slot IDs copied from AdSense
+4) Replace ads.txt example/comment with the exact authorized-seller line from AdSense
+5) Redeploy and verify ads.txt at /ads.txt
+6) Update Privacy/consent behavior if your actual ad configuration requires it.
+
+Affiliate:
+- Set affiliate.enabled=true and only fill URLs from your real partner account.
+- Links are automatically rel=sponsored nofollow noopener.
+
+Recommended before AdSense review: use a custom domain, keep adding original content, and wait for real organic traffic. Site approval is never guaranteed.
