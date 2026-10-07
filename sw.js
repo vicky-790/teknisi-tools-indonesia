@@ -1,4 +1,4 @@
-const CACHE = 'tti-v21-electrical-formula-center';
+const CACHE = 'tti-v22-smart-engineering-technician-assistant';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js'];
 
 self.addEventListener('install', event => {
