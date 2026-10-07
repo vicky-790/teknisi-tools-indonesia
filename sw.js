@@ -1,4 +1,4 @@
-const CACHE = 'tti-v23-visual-smart-assistant';
+const CACHE = 'tti-v24-ai-vision-smart-report';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js'];
 
 self.addEventListener('install', event => {

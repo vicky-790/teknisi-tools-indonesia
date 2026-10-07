@@ -573,5 +573,13 @@
   });
 
   populateBands();
+  window.TTIVisualBridge={
+    getFile:()=>state.file,
+    getNote:()=>note?.value||'',
+    getCategory:()=>category?.value||'general',
+    getOcrText:()=>state.ocrText||'',
+    getPreview:()=>preview,
+    reset:resetVisual
+  };
   resetVisual();
 })();
