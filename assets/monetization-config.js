@@ -1,4 +1,4 @@
-/* V1.8 Monetization config — safe defaults: nothing serves until IDs are filled. */
+/* V2.0.2 AdSense Approval Ready - SAFE DEFAULT: ads OFF until real ID is activated after review/CMP setup. */
 window.TTI_MONETIZATION={
   adsenseClient:'',
   slots:{homeInFeed:'',articleInContent:'',toolBottom:''},

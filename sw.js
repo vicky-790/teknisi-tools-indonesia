@@ -1,4 +1,4 @@
-const CACHE = 'tti-v201-civil-seo';
+const CACHE = 'tti-v202-adsense-ready';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js'];
 
 self.addEventListener('install', event => {
