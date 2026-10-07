@@ -1,4 +1,4 @@
-const CACHE = 'tti-v25-google-search-keyword-expansion';
+const CACHE = 'tti-v251-google-ranking-boost';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js'];
 
 self.addEventListener('install', event => {
