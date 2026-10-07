@@ -96,3 +96,95 @@ img,svg,canvas,video{max-width:100%;height:auto}
   .noise:after,.premiumAssistantCore,.premiumAssistantCore:before,.premiumAssistantCore:after,.aiVisionPanel:before{animation:none!important}
   .card,.formulaCard,.btn,.smartTiny,.visualAction,.aiBtn,.quickbtn{transition:none!important}
 }
+
+
+/* =========================================================
+   V2.4.1.2 — ACTION BUTTONS READABILITY HOTFIX
+   LOCK: no other visual/layout areas are changed.
+   ========================================================= */
+
+/* Keep action labels horizontal and readable everywhere. */
+.visualTopActions{
+  min-width:max-content;
+}
+.visualTopActions .visualTiny{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  white-space:nowrap!important;
+  writing-mode:horizontal-tb!important;
+  text-orientation:mixed!important;
+  overflow-wrap:normal!important;
+  word-break:keep-all!important;
+}
+.visualTopActions .visualTiny::before{
+  content:"";
+  width:18px;
+  height:18px;
+  flex:0 0 18px;
+  background-position:center;
+  background-repeat:no-repeat;
+  background-size:contain;
+  filter:drop-shadow(0 5px 9px rgba(52,157,255,.22));
+}
+.visualTopActions .visualTiny:nth-child(1)::before{background-image:url("/assets/icons/action-text.svg")}
+.visualTopActions .visualTiny:nth-child(2)::before{background-image:url("/assets/icons/action-copy.svg")}
+.visualTopActions .visualTiny:nth-child(3)::before{background-image:url("/assets/icons/action-tools.svg")}
+
+@media(max-width:620px){
+  /* The heading gets the whole row first; actions sit below it as a clean dock. */
+  .visualTopbar{
+    flex-direction:column!important;
+    align-items:stretch!important;
+    gap:16px!important;
+  }
+  .visualTopbar>div:first-child{
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+  }
+  .visualTopActions{
+    display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:8px!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    margin:0!important;
+    overflow:visible!important;
+  }
+  .visualTopActions .visualTiny{
+    width:100%!important;
+    min-width:0!important;
+    min-height:46px!important;
+    padding:10px 7px!important;
+    border-radius:14px!important;
+    font-size:10px!important;
+    line-height:1.1!important;
+    letter-spacing:0!important;
+    white-space:nowrap!important;
+    background:
+      linear-gradient(145deg,rgba(13,42,83,.96),rgba(5,20,43,.96))!important;
+    border:1px solid rgba(96,183,255,.19)!important;
+    box-shadow:
+      inset 0 1px rgba(255,255,255,.045),
+      0 10px 24px rgba(0,0,0,.13)!important;
+  }
+  .visualTopActions .visualTiny::before{
+    width:17px;
+    height:17px;
+    flex-basis:17px;
+  }
+}
+
+/* On very narrow phones keep horizontal text, but stack buttons for zero squeeze. */
+@media(max-width:350px){
+  .visualTopActions{
+    grid-template-columns:1fr!important;
+  }
+  .visualTopActions .visualTiny{
+    justify-content:flex-start!important;
+    padding-inline:14px!important;
+  }
+}
