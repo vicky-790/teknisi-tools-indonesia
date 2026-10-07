@@ -1,3 +1,4 @@
+import {apiJson as secureJson,sameOrigin,securityRateLimit} from '../_lib/security.js';
 let schemaReady = false;
 const ALLOWED = new Set([
   'page_view','calculator_open','calculate','copy_result','article_open',
@@ -12,7 +13,7 @@ const EXTRA_COLUMNS = {
   source:"TEXT NOT NULL DEFAULT ''",medium:"TEXT NOT NULL DEFAULT ''",landing_path:"TEXT NOT NULL DEFAULT ''",
   approx_lat:"REAL",approx_lon:"REAL",gps_lat:"REAL",gps_lon:"REAL",gps_accuracy:"REAL",gps_permission:"TEXT NOT NULL DEFAULT ''"
 };
-function json(data,status=200){return new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Robots-Tag':'noindex'}})}
+function json(data,status=200,headers={}){return secureJson(data,status,headers)}
 function clean(v,max){return String(v||'').replace(/[\u0000-\u001f\u007f]/g,' ').trim().slice(0,max)}
 function finite(v,min,max){const n=Number(v);return Number.isFinite(n)&&n>=min&&n<=max?n:null}
 function rounded(v,d=3){if(v===null||v===undefined||v==='')return null;const n=Number(v);return Number.isFinite(n)?Number(n.toFixed(d)):null}
@@ -29,11 +30,14 @@ function sourceFrom(meta){const us=clean(meta.utmSource,60).toLowerCase(),um=cle
 export async function onRequest(context){
   const req=context.request;if(req.method==='OPTIONS')return new Response(null,{status:204,headers:{Allow:'POST, OPTIONS'}});if(req.method!=='POST')return json({ok:false,error:'method_not_allowed'},405);
   const db=context.env.ANALYTICS_DB;if(!db)return json({ok:false,error:'analytics_db_not_configured'},503);
-  const reqUrl=new URL(req.url),origin=req.headers.get('origin');if(origin&&origin!==reqUrl.origin)return json({ok:false,error:'cross_origin_forbidden'},403);
+  if(!sameOrigin(req))return json({ok:false,error:'cross_origin_forbidden'},403);
+  const rl=await securityRateLimit(context,'analytics-event',{limit:300,windowSec:300,blockSec:900});
+  if(!rl.allowed)return json({ok:false,error:'rate_limited'},429,{'Retry-After':String(rl.retryAfter)});
+  const ct=(req.headers.get('content-type')||'').toLowerCase();if(!ct.includes('application/json'))return json({ok:false,error:'unsupported_media_type'},415);
   const len=Number(req.headers.get('content-length')||0);if(len>8192)return json({ok:false,error:'payload_too_large'},413);
   let data;try{const raw=await req.text();if(raw.length>8192)return json({ok:false,error:'payload_too_large'},413);data=JSON.parse(raw)}catch(e){return json({ok:false,error:'invalid_json'},400)}
   const event=clean(data.event,40),path=clean(data.path,220),label=clean(data.label,120),session=clean(data.session,80),landing=clean(data.landing,220);
-  if(!ALLOWED.has(event))return json({ok:false,error:'invalid_event'},400);if(!path.startsWith('/'))return json({ok:false,error:'invalid_path'},400);if(landing&&!landing.startsWith('/'))return json({ok:false,error:'invalid_landing'},400);
+  if(!ALLOWED.has(event))return json({ok:false,error:'invalid_event'},400);if(!path.startsWith('/'))return json({ok:false,error:'invalid_path'},400);if(landing&&!landing.startsWith('/'))return json({ok:false,error:'invalid_landing'},400)if(session&&!/^[A-Za-z0-9-]{8,80}$/.test(session))return json({ok:false,error:'invalid_session'},400);
   const cf=req.cf||{},ua=parseUA(req.headers.get('user-agent')),traffic=sourceFrom(data);
   const country=clean(cf.country,3).toUpperCase(),region=clean(cf.region||cf.regionCode,80),city=clean(cf.city,80),continent=clean(cf.continent,3).toUpperCase(),cfTimezone=clean(cf.timezone,80),referrerHost=clean(data.referrerHost,120).toLowerCase();
   const approxLat=rounded(finite(cf.latitude,-90,90),3),approxLon=rounded(finite(cf.longitude,-180,180),3);

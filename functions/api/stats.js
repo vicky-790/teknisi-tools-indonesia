@@ -1,8 +1,9 @@
+import {apiJson as secureJson,sameOrigin,verifyAdminRequest,securityRateLimit} from '../_lib/security.js';
 let schemaReady=false;
 const BASE_SCHEMA=`CREATE TABLE IF NOT EXISTS analytics_events(id INTEGER PRIMARY KEY AUTOINCREMENT,created_at TEXT NOT NULL,day_jakarta TEXT NOT NULL,event_type TEXT NOT NULL,path TEXT NOT NULL,label TEXT NOT NULL DEFAULT '',session_id TEXT NOT NULL DEFAULT '');CREATE INDEX IF NOT EXISTS idx_analytics_day ON analytics_events(day_jakarta);CREATE INDEX IF NOT EXISTS idx_analytics_type_day ON analytics_events(event_type,day_jakarta);CREATE INDEX IF NOT EXISTS idx_analytics_path_type ON analytics_events(path,event_type);`;
 const EXTRA_COLUMNS={country:"TEXT NOT NULL DEFAULT ''",region:"TEXT NOT NULL DEFAULT ''",city:"TEXT NOT NULL DEFAULT ''",continent:"TEXT NOT NULL DEFAULT ''",cf_timezone:"TEXT NOT NULL DEFAULT ''",device_type:"TEXT NOT NULL DEFAULT ''",browser:"TEXT NOT NULL DEFAULT ''",os:"TEXT NOT NULL DEFAULT ''",referrer_host:"TEXT NOT NULL DEFAULT ''",source:"TEXT NOT NULL DEFAULT ''",medium:"TEXT NOT NULL DEFAULT ''",landing_path:"TEXT NOT NULL DEFAULT ''",approx_lat:"REAL",approx_lon:"REAL",gps_lat:"REAL",gps_lon:"REAL",gps_accuracy:"REAL",gps_permission:"TEXT NOT NULL DEFAULT ''"};
 const COOKIE='__Host-tti_admin';
-function json(data,status=200){return new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store, max-age=0','X-Robots-Tag':'noindex'}})}
+function json(data,status=200,headers={}){return secureJson(data,status,headers)}
 async function ready(db){if(schemaReady)return;await db.exec(BASE_SCHEMA);const info=await db.prepare('PRAGMA table_info(analytics_events)').all(),present=new Set((info.results||[]).map(r=>r.name));for(const[n,t]of Object.entries(EXTRA_COLUMNS)){if(!present.has(n))await db.exec(`ALTER TABLE analytics_events ADD COLUMN ${n} ${t};`)}await db.exec(`CREATE INDEX IF NOT EXISTS idx_analytics_geo ON analytics_events(country,region,city);CREATE INDEX IF NOT EXISTS idx_analytics_source ON analytics_events(source,medium);CREATE INDEX IF NOT EXISTS idx_analytics_device ON analytics_events(device_type,browser,os);CREATE INDEX IF NOT EXISTS idx_analytics_landing ON analytics_events(landing_path);CREATE INDEX IF NOT EXISTS idx_analytics_coords ON analytics_events(approx_lat,approx_lon);`);schemaReady=true}
 function jktDay(o=0){return new Date(Date.now()+7*3600000+o*86400000).toISOString().slice(0,10)}
 function getCookie(req,name){const raw=req.headers.get('cookie')||'';for(const p of raw.split(';')){const i=p.indexOf('=');if(i<0)continue;if(p.slice(0,i).trim()===name)return p.slice(i+1).trim()}return''}
@@ -12,11 +13,15 @@ async function sign(secret,msg){const key=await crypto.subtle.importKey('raw',ne
 async function isAdmin(req,secret){const header=String(req.headers.get('x-stats-token')||'');if(header&&safeEq(header,secret))return true;const raw=getCookie(req,COOKIE),parts=raw.split('.');if(parts.length!==3||parts[0]!=='v1')return false;const exp=Number(parts[1]);if(!Number.isFinite(exp)||exp<Date.now())return false;const base=`v1.${exp}`,expected=await sign(secret,base);return safeEq(parts[2],expected)}
 function hint(s){return 'ANON-'+String(s||'').replace(/-/g,'').slice(0,6).toUpperCase()}
 export async function onRequest(context){
-  if(context.request.method!=='GET')return json({ok:false,error:'method_not_allowed'},405);
+  const req=context.request;
+  if(req.method!=='GET')return json({ok:false,error:'method_not_allowed'},405,{'Allow':'GET'});
+  if(!sameOrigin(req))return json({ok:false,error:'forbidden'},403);
   const db=context.env.ANALYTICS_DB;if(!db)return json({ok:false,error:'analytics_db_not_configured',setup:true},503);
-  const u=new URL(context.request.url),wantPrivate=u.searchParams.get('private')==='1',secret=String(context.env.STATS_TOKEN||'');
-  if(wantPrivate&&!secret)return json({ok:false,error:'stats_token_not_configured',adminSetup:true},503);
-  if(wantPrivate&&!(await isAdmin(context.request,secret)))return json({ok:false,error:'unauthorized'},401);
+  if(!String(context.env.STATS_TOKEN||''))return json({ok:false,error:'admin_not_configured',adminSetup:true},503);
+  if(!(await verifyAdminRequest(req,context.env)))return json({ok:false,error:'unauthorized'},401);
+  const rl=await securityRateLimit(context,'stats-read',{limit:120,windowSec:300,blockSec:600});
+  if(!rl.allowed)return json({ok:false,error:'rate_limited'},429,{'Retry-After':String(rl.retryAfter)});
+  const u=new URL(req.url),wantPrivate=u.searchParams.get('private')==='1';
   try{
     await ready(db);const today=jktDay(),start=jktDay(-13);
     if(wantPrivate){const cutoff=new Date(Date.now()-7*86400000).toISOString();await db.prepare("UPDATE analytics_events SET gps_lat=NULL,gps_lon=NULL,gps_accuracy=NULL WHERE gps_lat IS NOT NULL AND created_at < ?").bind(cutoff).run()}

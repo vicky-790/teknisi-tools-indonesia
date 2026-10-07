@@ -1,6 +1,7 @@
+import {apiJson as secureJson,sameOrigin,securityRateLimit} from '../_lib/security.js';
 
 const MODEL="@cf/google/gemma-4-26b-a4b-it",MAX_BODY=2600000,MAX_IMAGE_DATA_URL=2050000;
-function json(data,status=200){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json; charset=utf-8","Cache-Control":"no-store, max-age=0","X-Robots-Tag":"noindex","Referrer-Policy":"no-referrer"}})}
+function json(data,status=200,headers={}){return secureJson(data,status,headers)}
 function clean(v,max=1200){return String(v||"").replace(/[\u0000-\u001f\u007f]/g," ").trim().slice(0,max)}
 function parseDataUrl(x){const m=String(x||"").match(/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=\s]+)$/i);if(!m)return null;let bin;try{bin=atob(m[2].replace(/\s/g,""))}catch(e){return null}const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);return{mime:m[1].toLowerCase(),bytes}}
 function textOf(r){if(!r)return"";if(typeof r==="string")return r;if(typeof r.response==="string")return r.response;if(typeof r.result==="string")return r.result;if(typeof r.text==="string")return r.text;const c=r.choices?.[0]?.message?.content;if(typeof c==="string")return c;if(Array.isArray(c))return c.map(x=>x?.text||x?.content||"").join("\n");return""}
@@ -33,8 +34,18 @@ Return HANYA JSON valid tanpa markdown:
 async function direct(ai,img,prompt){return await ai.run(MODEL,{messages:[{role:"system",content:SYSTEM},{role:"user",content:[{type:"text",text:prompt},{type:"image_url",image_url:{url:img}}]}],max_tokens:1800,temperature:.12,chat_template_kwargs:{enable_thinking:false}},{rejectIfBusy:true})}
 async function fallback(ai,parsed,prompt){const c=await ai.toMarkdown({name:`upload.${parsed.mime.split("/")[1]||"jpg"}`,blob:new Blob([parsed.bytes],{type:parsed.mime})},{conversionOptions:{output:{format:"text"}}}),one=Array.isArray(c)?c[0]:c,vision=one?.data||"";const response=await ai.run(MODEL,{messages:[{role:"system",content:SYSTEM},{role:"user",content:`IMAGE DESCRIPTION / OCR DARI VISION PIPELINE:\n${clean(vision,7000)}\n\nUSER CONTEXT:\n${prompt}`}],max_tokens:1800,temperature:.12,chat_template_kwargs:{enable_thinking:false}},{rejectIfBusy:true});return response}
 export async function onRequest(context){
- const req=context.request;if(req.method==="GET")return json({ok:true,configured:!!context.env.AI,model:MODEL,storage:false});if(req.method==="OPTIONS")return new Response(null,{status:204,headers:{Allow:"GET, POST, OPTIONS"}});if(req.method!=="POST")return json({ok:false,error:"method_not_allowed"},405);if(!context.env.AI)return json({ok:false,error:"ai_binding_not_configured",message:"Tambahkan Workers AI binding bernama AI pada Cloudflare Pages project."},503);
- const u=new URL(req.url),origin=req.headers.get("origin");if(origin&&origin!==u.origin)return json({ok:false,error:"cross_origin_forbidden"},403);if(Number(req.headers.get("content-length")||0)>MAX_BODY)return json({ok:false,error:"payload_too_large"},413);
+ const req=context.request;
+ if(req.method==="GET")return json({ok:true,configured:!!context.env.AI,model:MODEL,storage:false,security:"v2.6"});
+ if(req.method==="OPTIONS")return new Response(null,{status:204,headers:{Allow:"GET, POST, OPTIONS","Cache-Control":"no-store"}});
+ if(req.method!=="POST")return json({ok:false,error:"method_not_allowed"},405,{"Allow":"GET, POST, OPTIONS"});
+ if(!sameOrigin(req))return json({ok:false,error:"cross_origin_forbidden"},403);
+ if(!context.env.AI)return json({ok:false,error:"ai_binding_not_configured",message:"AI Vision belum dikonfigurasi."},503);
+ const rl10=await securityRateLimit(context,"ai-vision-10m",{limit:20,windowSec:600,blockSec:900});
+ if(!rl10.allowed)return json({ok:false,error:"rate_limited",message:"Terlalu banyak permintaan AI. Coba lagi beberapa saat."},429,{"Retry-After":String(rl10.retryAfter)});
+ const rlHour=await securityRateLimit(context,"ai-vision-hour",{limit:60,windowSec:3600,blockSec:1800});
+ if(!rlHour.allowed)return json({ok:false,error:"rate_limited",message:"Batas penggunaan AI sementara tercapai."},429,{"Retry-After":String(rlHour.retryAfter)});
+ const ct=(req.headers.get("content-type")||"").toLowerCase();if(!ct.includes("application/json"))return json({ok:false,error:"unsupported_media_type"},415);
+ if(Number(req.headers.get("content-length")||0)>MAX_BODY)return json({ok:false,error:"payload_too_large"},413);
  let data;try{const raw=await req.text();if(raw.length>MAX_BODY)return json({ok:false,error:"payload_too_large"},413);data=JSON.parse(raw)}catch(e){return json({ok:false,error:"invalid_json"},400)}
  const imageDataUrl=String(data.imageDataUrl||"");if(imageDataUrl.length>MAX_IMAGE_DATA_URL)return json({ok:false,error:"image_too_large"},413);const parsed=parseDataUrl(imageDataUrl);if(!parsed)return json({ok:false,error:"invalid_image"},400);
  const mode=clean(data.mode,40)||"smart_report",category=clean(data.category,50)||"general",question=clean(data.question,1200),note=clean(data.note,1200),localOcr=clean(data.localOcr,2200);
