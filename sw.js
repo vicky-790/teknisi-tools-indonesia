@@ -1,4 +1,4 @@
-const CACHE = 'tti-v2721-cloudflare-recovery';
+const CACHE = 'tti-v273-civil-icon-consistency';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js', '/assets/troubleshooting-v27.css', '/assets/troubleshooting-v27.js', '/assets/civil-icons-v271.css'];
 
 self.addEventListener('install', event => {
