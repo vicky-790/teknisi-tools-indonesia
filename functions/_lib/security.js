@@ -1,7 +1,6 @@
 const COOKIE='__Host-tti_admin';
-let rateSchemaReady=false;
-const memoryLimits=new Map();
-const enc=new TextEncoder();
+let rateSchemaReady=false,auditSchemaReady=false;
+const memoryLimits=new Map(),enc=new TextEncoder();
 
 function b64url(buf){let s='';for(const b of new Uint8Array(buf))s+=String.fromCharCode(b);return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function hex(buf){return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('')}
@@ -9,18 +8,13 @@ function getCookie(req,name){const raw=req.headers.get('cookie')||'';for(const p
 function safeBytes(a,b){if(a.length!==b.length)return false;let x=0;for(let i=0;i<a.length;i++)x|=a[i]^b[i];return x===0}
 async function sha256(v){return new Uint8Array(await crypto.subtle.digest('SHA-256',enc.encode(String(v||''))))}
 async function hmac(secret,msg){const key=await crypto.subtle.importKey('raw',enc.encode(secret),{name:'HMAC',hash:'SHA-256'},false,['sign']);return new Uint8Array(await crypto.subtle.sign('HMAC',key,enc.encode(msg)))}
+function validRole(v){return ['admin','owner'].includes(v)?v:'admin'}
 
 export function apiJson(data,status=200,headers={}){
   return new Response(JSON.stringify(data),{status,headers:{
-    'Content-Type':'application/json; charset=utf-8',
-    'Cache-Control':'no-store, max-age=0',
-    'X-Robots-Tag':'noindex',
-    'X-Content-Type-Options':'nosniff',
-    'Referrer-Policy':'no-referrer',
-    'Cross-Origin-Resource-Policy':'same-origin',
-    'Content-Security-Policy':"default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
-    ...headers
-  }})
+    'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store, max-age=0','X-Robots-Tag':'noindex',
+    'X-Content-Type-Options':'nosniff','Referrer-Policy':'no-referrer','Cross-Origin-Resource-Policy':'same-origin',
+    'Content-Security-Policy':"default-src 'none'; frame-ancestors 'none'; base-uri 'none'",...headers}})
 }
 export function sameOrigin(req){
   let url;try{url=new URL(req.url)}catch(e){return false}
@@ -30,27 +24,54 @@ export function sameOrigin(req){
   return true
 }
 export async function secretEqual(a,b){return safeBytes(await sha256(String(a||'')),await sha256(String(b||'')))}
-export function getSessionSecret(env){const s=String(env.ADMIN_SESSION_SECRET||'');return s.length>=32?s:String(env.STATS_TOKEN||'')}
+export function getSessionSecret(env){const s=String(env.ADMIN_SESSION_SECRET||'');return s.length>=32?s:String(env.STATS_TOKEN||env.ADMIN_TOKEN||'')}
 export function hasSeparateSessionSecret(env){return String(env.ADMIN_SESSION_SECRET||'').length>=32}
-export async function issueAdminSession(env,remember=true){
-  const secret=getSessionSecret(env);if(!secret)throw new Error('session_secret_missing');
+export function getAdminSecret(env){return String(env.ADMIN_TOKEN||env.STATS_TOKEN||'')}
+export function getOwnerSecret(env){return String(env.OWNER_TOKEN||'')}
+export function configuredRoles(env){return{admin:!!getAdminSecret(env),owner:!!getOwnerSecret(env)}}
+
+export async function issueAdminSession(env,remember=true,role='admin'){
+  role=validRole(role);const secret=getSessionSecret(env);if(!secret)throw new Error('session_secret_missing');
   const ttl=remember?30*86400:12*3600,exp=Date.now()+ttl*1000,nonce=crypto.randomUUID().replace(/-/g,'');
-  const base=`v2.${exp}.${nonce}`,sig=b64url(await hmac(secret,base)),value=`${base}.${sig}`;
+  const base=`v3.${role}.${exp}.${nonce}`,sig=b64url(await hmac(secret,base)),value=`${base}.${sig}`;
   let cookie=`${COOKIE}=${value}; Path=/; HttpOnly; Secure; SameSite=Strict; Priority=High`;if(remember)cookie+=`; Max-Age=${ttl}`;
-  return{cookie,expiresAt:new Date(exp).toISOString(),remembered:remember}
+  return{cookie,expiresAt:new Date(exp).toISOString(),remembered:remember,role}
 }
 export function clearAdminSession(){return `${COOKIE}=; Path=/; HttpOnly; Secure; SameSite=Strict; Priority=High; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT`}
-export async function verifyAdminRequest(req,env){
-  const secret=getSessionSecret(env);if(!secret)return false;
-  if(String(env.ALLOW_STATS_TOKEN_HEADER||'')==='1'){const h=String(req.headers.get('x-stats-token')||'');if(h&&await secretEqual(h,String(env.STATS_TOKEN||'')))return true}
-  const parts=getCookie(req,COOKIE).split('.');if(parts.length!==4||parts[0]!=='v2')return false;
-  const exp=Number(parts[1]),nonce=parts[2],sig=parts[3];if(!Number.isFinite(exp)||exp<Date.now()||exp>Date.now()+31*86400000)return false;
-  if(!/^[a-f0-9]{32}$/i.test(nonce)||!/^[A-Za-z0-9_-]{32,64}$/.test(sig))return false;
-  return secretEqual(sig,b64url(await hmac(secret,`v2.${exp}.${nonce}`)))
+
+export async function readAdminSession(req,env){
+  const secret=getSessionSecret(env);if(!secret)return{ok:false,role:null,version:null};
+  const raw=getCookie(req,COOKIE),parts=raw.split('.');
+  if(parts.length===5&&parts[0]==='v3'){
+    const role=validRole(parts[1]),exp=Number(parts[2]),nonce=parts[3],sig=parts[4];
+    if(!Number.isFinite(exp)||exp<Date.now()||exp>Date.now()+31*86400000)return{ok:false,role:null,version:'v3'};
+    if(!/^[a-f0-9]{32}$/i.test(nonce)||!/^[A-Za-z0-9_-]{32,64}$/.test(sig))return{ok:false,role:null,version:'v3'};
+    const expected=b64url(await hmac(secret,`v3.${role}.${exp}.${nonce}`));
+    return await secretEqual(sig,expected)?{ok:true,role,version:'v3',expiresAt:new Date(exp).toISOString()}:{ok:false,role:null,version:'v3'};
+  }
+  // Compatibility with V2.6/V2.8.1 admin sessions during rollout. They are ADMIN only.
+  if(parts.length===4&&parts[0]==='v2'){
+    const exp=Number(parts[1]),nonce=parts[2],sig=parts[3];
+    if(!Number.isFinite(exp)||exp<Date.now()||exp>Date.now()+31*86400000)return{ok:false,role:null,version:'v2'};
+    if(!/^[a-f0-9]{32}$/i.test(nonce)||!/^[A-Za-z0-9_-]{32,64}$/.test(sig))return{ok:false,role:null,version:'v2'};
+    const expected=b64url(await hmac(secret,`v2.${exp}.${nonce}`));
+    return await secretEqual(sig,expected)?{ok:true,role:'admin',version:'v2',expiresAt:new Date(exp).toISOString()}:{ok:false,role:null,version:'v2'};
+  }
+  return{ok:false,role:null,version:null}
 }
+export async function verifyRoleRequest(req,env,roles=['admin','owner']){
+  if(String(env.ALLOW_STATS_TOKEN_HEADER||'')==='1'){
+    const h=String(req.headers.get('x-stats-token')||'');
+    if(h&&await secretEqual(h,getAdminSecret(env)))return{ok:true,role:'admin',version:'header'};
+    if(h&&getOwnerSecret(env)&&await secretEqual(h,getOwnerSecret(env)))return{ok:true,role:'owner',version:'header'};
+  }
+  const s=await readAdminSession(req,env);return s.ok&&roles.includes(s.role)?s:{ok:false,role:s.role,version:s.version}
+}
+export async function verifyAdminRequest(req,env){const s=await verifyRoleRequest(req,env,['admin','owner']);return !!s.ok}
+
 async function clientFingerprint(req,env,extra=''){
   const raw=`${req.headers.get('cf-connecting-ip')||''}|${String(req.headers.get('user-agent')||'').slice(0,220)}|${req.cf?.colo||''}|${extra}`;
-  const secret=getSessionSecret(env)||String(env.STATS_TOKEN||'')||'tti-v26-rate-fallback';
+  const secret=getSessionSecret(env)||getAdminSecret(env)||'tti-v282-rate-fallback';
   try{return hex(await hmac(secret,raw)).slice(0,48)}catch(e){return hex(await sha256(raw)).slice(0,48)}
 }
 async function ensureRateSchema(db){
@@ -82,4 +103,13 @@ export async function securityRateLimit(context,bucket,opts={}){
     if(blocked)return{allowed:false,retryAfter:blockSec,backend:'d1'};return{allowed:true,retryAfter:0,backend:'d1'}
   }catch(e){}}
   return memoryRate(bucket,key,limit,windowSec,blockSec,now)
+}
+async function ensureAuditSchema(db){
+  if(auditSchemaReady)return;
+  await db.exec(`CREATE TABLE IF NOT EXISTS security_audit(id INTEGER PRIMARY KEY AUTOINCREMENT,created_at TEXT NOT NULL,action TEXT NOT NULL,role TEXT NOT NULL DEFAULT '',outcome TEXT NOT NULL DEFAULT '',client_hash TEXT NOT NULL DEFAULT '',detail TEXT NOT NULL DEFAULT '');CREATE INDEX IF NOT EXISTS idx_security_audit_created ON security_audit(created_at);`);
+  auditSchemaReady=true
+}
+export async function securityAudit(context,action,role='',outcome='',detail=''){
+  const db=context.env.ANALYTICS_DB;if(!db)return;
+  try{await ensureAuditSchema(db);const hash=await clientFingerprint(context.request,context.env,'audit');await db.prepare(`INSERT INTO security_audit(created_at,action,role,outcome,client_hash,detail) VALUES(?,?,?,?,?,?)`).bind(new Date().toISOString(),String(action).slice(0,80),String(role).slice(0,20),String(outcome).slice(0,20),hash,String(detail).slice(0,300)).run()}catch(e){}
 }
