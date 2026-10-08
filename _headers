@@ -66,3 +66,9 @@
 
 /assets/control-center-v284.js
   Cache-Control: no-cache, no-store, must-revalidate
+
+/assets/control-center-v285.css
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/assets/control-center-v285.js
+  Cache-Control: no-cache, no-store, must-revalidate
