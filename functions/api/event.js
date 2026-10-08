@@ -37,7 +37,7 @@ export async function onRequest(context){
   const len=Number(req.headers.get('content-length')||0);if(len>8192)return json({ok:false,error:'payload_too_large'},413);
   let data;try{const raw=await req.text();if(raw.length>8192)return json({ok:false,error:'payload_too_large'},413);data=JSON.parse(raw)}catch(e){return json({ok:false,error:'invalid_json'},400)}
   const event=clean(data.event,40),path=clean(data.path,220),label=clean(data.label,120),session=clean(data.session,80),landing=clean(data.landing,220);
-  if(!ALLOWED.has(event))return json({ok:false,error:'invalid_event'},400);if(!path.startsWith('/'))return json({ok:false,error:'invalid_path'},400);if(landing&&!landing.startsWith('/'))return json({ok:false,error:'invalid_landing'},400)if(session&&!/^[A-Za-z0-9-]{8,80}$/.test(session))return json({ok:false,error:'invalid_session'},400);
+  if(!ALLOWED.has(event))return json({ok:false,error:'invalid_event'},400);if(!path.startsWith('/'))return json({ok:false,error:'invalid_path'},400);if(landing&&!landing.startsWith('/'))return json({ok:false,error:'invalid_landing'},400);if(session&&!/^[A-Za-z0-9-]{8,80}$/.test(session))return json({ok:false,error:'invalid_session'},400);
   const cf=req.cf||{},ua=parseUA(req.headers.get('user-agent')),traffic=sourceFrom(data);
   const country=clean(cf.country,3).toUpperCase(),region=clean(cf.region||cf.regionCode,80),city=clean(cf.city,80),continent=clean(cf.continent,3).toUpperCase(),cfTimezone=clean(cf.timezone,80),referrerHost=clean(data.referrerHost,120).toLowerCase();
   const approxLat=rounded(finite(cf.latitude,-90,90),3),approxLon=rounded(finite(cf.longitude,-180,180),3);
