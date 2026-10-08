@@ -1,0 +1,50 @@
+
+/* V2.7.1 — Civil Icon Visibility Hotfix
+   Explicitly isolates the Home Civil material images from legacy/global image rules. */
+.civilToolCards .civilCard .icon{
+  width:88px!important;
+  height:88px!important;
+  min-width:88px!important;
+  min-height:88px!important;
+  padding:5px!important;
+  display:grid!important;
+  place-items:center!important;
+  overflow:visible!important;
+  position:relative!important;
+  z-index:3!important;
+  border-radius:22px!important;
+  background:linear-gradient(145deg,rgba(19,71,140,.36),rgba(9,33,72,.54))!important;
+  border:1px solid rgba(84,184,255,.23)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.04),0 12px 28px rgba(0,0,0,.14)!important;
+  filter:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+.civilToolCards .civilCard .icon>img.civilRealIcon{
+  width:78px!important;
+  height:78px!important;
+  max-width:78px!important;
+  max-height:78px!important;
+  min-width:78px!important;
+  min-height:78px!important;
+  display:block!important;
+  object-fit:contain!important;
+  object-position:center!important;
+  position:static!important;
+  inset:auto!important;
+  margin:0!important;
+  padding:0!important;
+  opacity:1!important;
+  visibility:visible!important;
+  transform:none!important;
+  filter:drop-shadow(0 10px 16px rgba(0,0,0,.28))!important;
+  z-index:4!important;
+}
+.civilToolCards .civilCard::after{z-index:0!important}
+.civilToolCards .civilCard>h3,
+.civilToolCards .civilCard>p,
+.civilToolCards .civilCard>.tag{position:relative;z-index:2}
+@media(max-width:560px){
+  .civilToolCards .civilCard .icon{width:82px!important;height:82px!important;min-width:82px!important;min-height:82px!important}
+  .civilToolCards .civilCard .icon>img.civilRealIcon{width:72px!important;height:72px!important;min-width:72px!important;min-height:72px!important}
+}
