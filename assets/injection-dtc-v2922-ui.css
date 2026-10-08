@@ -1,0 +1,221 @@
+/* V2.9.2.2 — Injection & DTC Premium Mobile UI Fix */
+body .injHero{padding:118px 0 48px!important;overflow:hidden}
+body .injHeroGrid{gap:28px!important}
+body .injHero h1{margin:12px 0 16px!important}
+body .injHero p{font-size:14px!important;line-height:1.75!important;color:#93a5bd!important}
+body .injBadges{gap:8px!important}
+body .injBadges span{font-size:9px!important;padding:7px 10px!important}
+body .injVisual{min-height:360px!important}
+body .injVisual img{width:min(320px,74vw)!important}
+
+body .section[id="dtc-lookup"],
+body .section[id="mil-helper"],
+body .section[id="guided-test"],
+body .section[id="correlation"]{
+  padding:58px 0!important;
+}
+body .sectionHead{
+  max-width:850px!important;
+  margin-bottom:22px!important;
+}
+body .sectionHead h2{
+  margin:8px 0 10px!important;
+  font-size:clamp(28px,5vw,44px)!important;
+  line-height:1.05!important;
+  letter-spacing:-.035em!important;
+}
+body .sectionHead p{
+  margin:0!important;
+  max-width:760px!important;
+  font-size:13px!important;
+  line-height:1.7!important;
+  color:#8094af!important;
+}
+
+body .injGrid.two{
+  display:grid!important;
+  grid-template-columns:minmax(0,.92fr) minmax(0,1.08fr)!important;
+  gap:16px!important;
+  align-items:start!important;
+}
+body .injPanel{
+  padding:20px!important;
+  border:1px solid rgba(83,167,248,.16)!important;
+  border-radius:20px!important;
+  background:linear-gradient(155deg,rgba(7,26,55,.96),rgba(3,12,27,.98))!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.03),0 16px 40px rgba(0,0,0,.16)!important;
+  overflow:hidden!important;
+}
+body .injPanel > *:first-child{margin-top:0!important}
+body .injLabel,
+body .milInputs label,
+body .testInputs label{
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:stretch!important;
+  gap:7px!important;
+  width:100%!important;
+  margin:0 0 13px!important;
+  color:#9ab0ca!important;
+  font-size:11px!important;
+  font-weight:700!important;
+  line-height:1.35!important;
+}
+body .injLabel input,
+body .injLabel select,
+body .injLabel textarea,
+body .milInputs input,
+body .testInputs input{
+  display:block!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  min-height:48px!important;
+  margin:0!important;
+  padding:0 13px!important;
+  border:1px solid rgba(91,169,244,.22)!important;
+  border-radius:12px!important;
+  background:#041126!important;
+  color:#eaf6ff!important;
+  font:600 13px/1.2 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+  box-shadow:none!important;
+  outline:none!important;
+  appearance:none!important;
+  -webkit-appearance:none!important;
+  box-sizing:border-box!important;
+}
+body .injLabel textarea{
+  min-height:108px!important;
+  padding:12px 13px!important;
+  resize:vertical!important;
+}
+body .injLabel select{
+  background-image:
+    linear-gradient(45deg,transparent 50%,#7dcfff 50%),
+    linear-gradient(135deg,#7dcfff 50%,transparent 50%)!important;
+  background-position:
+    calc(100% - 18px) 21px,
+    calc(100% - 13px) 21px!important;
+  background-size:5px 5px,5px 5px!important;
+  background-repeat:no-repeat!important;
+  padding-right:34px!important;
+}
+body .injLabel select option{
+  background:#06152d!important;
+  color:#eef8ff!important;
+}
+body .injLabel input::placeholder,
+body .injLabel textarea::placeholder{color:#536b89!important;opacity:1!important}
+
+body .milInputs,
+body .testInputs{
+  display:grid!important;
+  gap:10px!important;
+  margin:0 0 13px!important;
+}
+body .milInputs{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+body .testInputs{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+
+body .injBtn{
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  width:auto!important;
+  min-height:48px!important;
+  padding:0 18px!important;
+  border:none!important;
+  border-radius:12px!important;
+  background:linear-gradient(135deg,#0ba0e8,#3350f1)!important;
+  color:#fff!important;
+  font:800 12px/1 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important;
+  box-shadow:0 12px 30px rgba(18,106,255,.22)!important;
+}
+body .injBtn:active{transform:translateY(1px)!important}
+
+body .injHint,
+body .injEmpty{
+  margin-top:14px!important;
+  padding:13px!important;
+  border:1px dashed rgba(84,165,244,.18)!important;
+  border-radius:12px!important;
+  background:rgba(7,31,65,.25)!important;
+  color:#7f94ae!important;
+  font-size:10px!important;
+  line-height:1.65!important;
+}
+body .dtcCard h3,
+body .resultCard h3{
+  margin:8px 0 9px!important;
+  font-size:23px!important;
+  line-height:1.08!important;
+}
+body .dtcCard p,
+body .resultCard p{
+  font-size:11px!important;
+  line-height:1.6!important;
+  color:#90a4bd!important;
+}
+body .dtcCode{font-size:12px!important}
+body .resultMeta span{font-size:8px!important}
+body .testStep{
+  grid-template-columns:34px minmax(0,1fr)!important;
+  gap:10px!important;
+  padding:11px!important;
+}
+body .testStep strong{font-size:11px!important}
+body .testStep span{font-size:10px!important;line-height:1.55!important}
+body .warnBox,
+body .passBox{font-size:10px!important;line-height:1.6!important}
+
+body .injSafety{
+  padding:20px!important;
+  border-radius:18px!important;
+}
+body .injSafety h3{font-size:22px!important;line-height:1.1!important}
+body .injSafety p{font-size:11px!important;line-height:1.65!important}
+
+@media(max-width:960px){
+  body .injGrid.two{grid-template-columns:1fr!important}
+  body .injHeroGrid{grid-template-columns:1fr!important}
+}
+@media(max-width:600px){
+  body .injHero{padding:88px 0 30px!important}
+  body .injHeroGrid{gap:12px!important}
+  body .injHero h1{font-size:44px!important;line-height:.96!important}
+  body .injHero p{font-size:13px!important}
+  body .heroBtns{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important}
+  body .heroBtns .btn{width:100%!important;min-width:0!important;padding:0 10px!important;text-align:center!important;justify-content:center!important}
+  body .injBadges{margin-top:14px!important}
+  body .injVisual{min-height:300px!important;margin-top:4px!important}
+  body .injVisual img{width:min(280px,78vw)!important}
+  body .r1{width:270px!important;height:270px!important}
+  body .r2{width:225px!important;height:225px!important}
+  body .scanNode{font-size:8px!important;padding:7px 9px!important}
+  body .scanNode.a{top:5%!important;left:2%!important}
+  body .scanNode.b{top:23%!important;right:0!important}
+  body .scanNode.c{bottom:16%!important;left:0!important}
+  body .scanNode.d{bottom:4%!important;right:7%!important}
+  body .section[id="dtc-lookup"],
+  body .section[id="mil-helper"],
+  body .section[id="guided-test"],
+  body .section[id="correlation"]{
+    padding:40px 0!important;
+  }
+  body .sectionHead{margin-bottom:16px!important}
+  body .sectionHead h2{font-size:29px!important}
+  body .sectionHead p{font-size:12px!important}
+  body .injPanel{padding:16px!important;border-radius:17px!important}
+  body .injLabel,
+  body .milInputs label,
+  body .testInputs label{font-size:10px!important;margin-bottom:11px!important}
+  body .injLabel input,
+  body .injLabel select,
+  body .injLabel textarea,
+  body .milInputs input,
+  body .testInputs input{min-height:46px!important;font-size:13px!important}
+  body .milInputs,
+  body .testInputs{grid-template-columns:1fr!important}
+  body .injBtn{width:100%!important}
+  body .injHint,
+  body .injEmpty{font-size:10px!important}
+}

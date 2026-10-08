@@ -96,3 +96,6 @@
 
 /assets/injection-dtc-v292.js
   Cache-Control: public, max-age=604800
+
+/assets/injection-dtc-v2922-ui.css
+  Cache-Control: public, max-age=604800
