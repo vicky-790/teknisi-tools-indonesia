@@ -3,7 +3,7 @@
 <title>Secure Control Center | Teknisi Tools Indonesia</title>
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/assets/control-center-v283.css?v=283">
+<link rel="stylesheet" href="/assets/control-center-v283.css?v=283"><link rel="stylesheet" href="/assets/control-center-v284.css?v=284">
 </head><body class="ccBody">
 <div class="bootGate" id="bootGate"><div class="bootSpinner"></div><b>Memverifikasi secure session…</b></div>
 
@@ -11,13 +11,13 @@
   <aside class="sidePanel">
     <div class="brandBlock">
       <img src="/assets/tti-control-logo.jpg?v=283" alt="Teknisi Tools Indonesia">
-      <div><b>CONTROL CENTER</b><span>V2.8.3 • Private Backoffice</span></div>
+      <div><b>CONTROL CENTER</b><span>V2.8.4 • Dashboard Expansion</span></div>
     </div>
 
     <nav class="sideNav">
       <button class="active" type="button" data-view="overview">▦ <span>Overview</span></button>
       <button type="button" data-view="analytics">⌁ <span>Analytics</span></button>
-      <button type="button" data-view="operations">⚙ <span>Operations</span></button>
+      <button type="button" data-view="operations">⚙ <span>Operations</span></button><button type="button" data-view="health">● <span>Health</span></button><button type="button" data-view="seo">◎ <span>SEO</span></button><button type="button" data-view="ai">✦ <span>AI Usage</span></button><button type="button" data-view="release">↟ <span>Release</span></button>
       <button class="ownerOnly" type="button" data-view="security">◇ <span>Security</span></button>
       <button class="ownerOnly" type="button" data-view="audit">◷ <span>Audit Log</span></button>
     </nav>
@@ -63,6 +63,10 @@
       <div class="notice">Tidak ada secret, password, token, atau credential yang ditampilkan ke browser.</div></article>
     </section>
 
+<section class="ccView" id="view-health" hidden><div class="adminToolbar"><div><span class="eyebrow">ADMIN + OWNER</span><h2>System Health</h2></div><button id="refreshHealth">Refresh Health</button></div><div class="healthCards"><article class="healthCard"><small>D1 DATABASE</small><b id="hD1">-</b><span>live query</span></article><article class="healthCard"><small>WORKERS AI</small><b id="hAI">-</b><span>binding</span></article><article class="healthCard"><small>D1 LATENCY</small><b id="hLatency">-</b><span>probe</span></article><article class="healthCard"><small>RATE ROWS</small><b id="hRate">-</b><span>security table</span></article></div><div class="adminPanel wide" style="margin-top:12px"><div id="healthSummary" class="adminList"></div></div></section>
+<section class="ccView" id="view-seo" hidden><div class="adminToolbar"><div><span class="eyebrow">ADMIN + OWNER</span><h2>SEO Center</h2></div><button id="refreshSeo">Run Checks</button></div><div class="adminGrid"><article class="adminPanel"><div class="seoScore"><strong id="seoScoreNum">-</strong><div><b>Live SEO checks</b><span id="seoScoreText">Waiting...</span></div></div></article><article class="adminPanel"><span class="eyebrow">SITEMAP</span><h2><span id="seoUrlCount">-</span> URLs</h2><p>Private Control Center tetap dikeluarkan dari sitemap publik.</p></article><article class="adminPanel wide"><div id="seoChecks" class="adminList"></div><p id="seoNote"></p></article></div></section>
+<section class="ccView" id="view-ai" hidden><div class="adminToolbar"><div><span class="eyebrow">ADMIN + OWNER</span><h2>AI Usage Monitor</h2></div><button id="refreshAi">Refresh AI</button></div><div class="healthCards"><article class="healthCard"><small>AI BINDING</small><b id="aiBinding">-</b></article><article class="healthCard"><small>RATE WINDOWS</small><b id="aiRows">-</b></article><article class="healthCard"><small>RECORDED HITS</small><b id="aiHits">-</b></article><article class="healthCard"><small>MODEL</small><b style="font-size:11px">@cf/google/gemma</b></article></div><div class="adminPanel wide" style="margin-top:12px"><div id="aiWindows" class="adminList"></div><p id="aiPrivacy"></p></div></section>
+<section class="ccView" id="view-release" hidden><div class="adminToolbar"><div><span class="eyebrow">ADMIN + OWNER</span><h2>Release Info</h2></div><button id="refreshRelease">Refresh Release</button></div><article class="adminPanel wide"><div id="releaseInfo"></div></article></section>
     <section class="ccView" id="view-security" hidden>
       <article class="glassPanel"><span class="eyebrow">OWNER ONLY</span><h2>Security posture</h2><div class="statusList" id="ownerPosture"></div></article>
     </section>
@@ -73,5 +77,5 @@
   </section>
 </main>
 
-<script src="/assets/control-center-v283.js?v=283" defer></script>
+<script src="/assets/control-center-v284.js?v=284" defer></script>
 </body></html>

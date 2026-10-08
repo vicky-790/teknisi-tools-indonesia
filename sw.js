@@ -1,4 +1,4 @@
-const CACHE = 'tti-v283-separate-secure-login';
+const CACHE = 'tti-v284-owner-admin-dashboard-expansion';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js', '/assets/troubleshooting-v27.css', '/assets/troubleshooting-v27.js', '/assets/civil-icons-v271.css', '/assets/job-report-v28.css', '/assets/job-report-v28.js', '/assets/job-storage-v281.css', '/assets/job-storage-v281.js'];
 
 self.addEventListener('install', event => {
