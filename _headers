@@ -84,3 +84,9 @@
 
 /assets/motorcycle-v29.js
   Cache-Control: public, max-age=604800
+
+/assets/tti-moto-3d-v291.webp
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/motorcycle-v291-logo.css
+  Cache-Control: public, max-age=31536000, immutable
