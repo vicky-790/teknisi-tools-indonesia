@@ -1,4 +1,4 @@
-const CACHE = 'tti-v2732-tools-civil-icon-sync-fix';
+const CACHE = 'tti-v274-premium-3d-tool-icons';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js', '/assets/troubleshooting-v27.css', '/assets/troubleshooting-v27.js', '/assets/civil-icons-v271.css'];
 
 self.addEventListener('install', event => {
