@@ -1,0 +1,7 @@
+(()=>{'use strict';const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];let role='admin';
+function msg(t){$('#ccLoginMsg').textContent=t}
+$$('.roleTabs button').forEach(b=>b.onclick=()=>{$$('.roleTabs button').forEach(x=>x.classList.remove('active'));b.classList.add('active');role=b.dataset.role});
+async function checkExisting(){try{const r=await fetch('/api/admin-session',{credentials:'same-origin',cache:'no-store'}),d=await r.json();if(r.ok&&d.authenticated)location.replace('/pages/control-center')}catch(e){}}
+async function login(){const token=$('#ccToken').value.trim();if(!token)return msg('Masukkan token dulu.');const btn=$('#ccLoginBtn');btn.disabled=true;msg('Memverifikasi di server…');try{const r=await fetch('/api/admin-login',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,role,remember:$('#ccRemember').checked})}),d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(r.status===401?'Token / role tidak cocok.':d.error||'Login gagal.');$('#ccToken').value='';msg('Login berhasil. Membuka Control Center…');location.replace('/pages/control-center')}catch(e){msg(e.message||'Login gagal.');btn.disabled=false}}
+$('#ccLoginBtn').onclick=login;$('#ccToken').addEventListener('keydown',e=>{if(e.key==='Enter')login()});checkExisting();
+})();

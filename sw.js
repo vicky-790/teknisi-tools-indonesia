@@ -1,4 +1,4 @@
-const CACHE = 'tti-v2822-control-center-ui-hotfix';
+const CACHE = 'tti-v283-separate-secure-login';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js', '/assets/troubleshooting-v27.css', '/assets/troubleshooting-v27.js', '/assets/civil-icons-v271.css', '/assets/job-report-v28.css', '/assets/job-report-v28.js', '/assets/job-storage-v281.css', '/assets/job-storage-v281.js'];
 
 self.addEventListener('install', event => {
@@ -22,6 +22,10 @@ self.addEventListener('fetch', event => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
   if (url.pathname.startsWith('/api/')) return;
+  if (url.pathname.startsWith('/pages/control-') || url.pathname.startsWith('/assets/control-') || url.pathname === '/assets/tti-control-logo.jpg') {
+    event.respondWith(fetch(request, { cache: 'no-store' }).catch(() => new Response('', { status: 503 })));
+    return;
+  }
 
   if (request.mode === 'navigate' || request.destination === 'document') {
     event.respondWith((async () => {

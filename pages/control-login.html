@@ -1,0 +1,36 @@
+<!doctype html><html lang="id"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Secure Login | Teknisi Tools Indonesia</title>
+<meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/control-center-v283.css?v=283">
+</head><body class="ccBody ccLoginBody">
+<main class="authPage">
+  <section class="authCard">
+    <img class="authLogo" src="/assets/tti-control-logo.jpg?v=283" alt="Teknisi Tools Indonesia">
+    <span class="eyebrow">V2.8.3 • SECURE ACCESS</span>
+    <h1>Owner & Admin<br><span>Control Center</span></h1>
+    <p>Halaman login privat terpisah dari dashboard. Setelah autentikasi berhasil, browser akan pindah ke Control Center.</p>
+
+    <div class="roleTabs" role="tablist" aria-label="Pilih role">
+      <button class="active" type="button" data-role="admin">ADMIN</button>
+      <button type="button" data-role="owner">OWNER</button>
+    </div>
+
+    <label class="fieldLabel">Access token
+      <input id="ccToken" type="password" autocomplete="current-password" placeholder="Masukkan token role">
+    </label>
+
+    <label class="rememberRow"><input id="ccRemember" type="checkbox" checked> Ingat perangkat ini 30 hari</label>
+
+    <button class="primaryBtn" id="ccLoginBtn" type="button">Secure Login</button>
+    <div class="loginMsg" id="ccLoginMsg">Token tidak disimpan di localStorage / sessionStorage.</div>
+
+    <div class="authFoot">
+      <span>🔒 Server-side RBAC</span>
+      <a href="/">Kembali ke website publik ↗</a>
+    </div>
+  </section>
+</main>
+<script src="/assets/control-login-v283.js?v=283" defer></script>
+</body></html>
