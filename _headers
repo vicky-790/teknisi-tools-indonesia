@@ -78,3 +78,9 @@
 
 /assets/control-center-v286.js
   Cache-Control: no-cache, no-store, must-revalidate
+
+/assets/motorcycle-v29.css
+  Cache-Control: public, max-age=604800
+
+/assets/motorcycle-v29.js
+  Cache-Control: public, max-age=604800
