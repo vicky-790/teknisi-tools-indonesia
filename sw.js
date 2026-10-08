@@ -1,5 +1,5 @@
-const CACHE = 'tti-v26-security-hardening';
-const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js'];
+const CACHE = 'tti-v27-troubleshooting-voice';
+const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js', '/assets/troubleshooting-v27.css', '/assets/troubleshooting-v27.js'];
 
 self.addEventListener('install', event => {
   self.skipWaiting();

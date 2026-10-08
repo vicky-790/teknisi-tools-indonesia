@@ -1,0 +1,50 @@
+
+/* V2.7 Smart Troubleshooting Wizard + Voice Assistant — scoped additions only */
+.voiceAssistantDock{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0 2px}
+.voiceBtn{appearance:none;border:1px solid rgba(86,180,255,.2);background:linear-gradient(145deg,rgba(12,44,87,.96),rgba(5,20,43,.96));color:#dff4ff;border-radius:12px;min-height:40px;padding:9px 13px;font:800 10px/1.2 inherit;cursor:pointer;box-shadow:inset 0 1px rgba(255,255,255,.04),0 8px 24px rgba(0,0,0,.12)}
+.voiceBtn:hover{transform:translateY(-1px);border-color:rgba(82,205,255,.38)}
+.voiceBtn.listening{border-color:rgba(55,222,255,.7);box-shadow:0 0 0 3px rgba(31,189,255,.09),0 0 26px rgba(31,178,255,.16)}
+.voiceBtn.speaking{border-color:rgba(91,255,188,.55)}
+.voiceBtn[disabled]{opacity:.48;cursor:not-allowed;transform:none}
+.voiceStatus{min-width:0;color:#7690ae;font-size:9px;line-height:1.5;overflow-wrap:anywhere}
+.voicePulse{display:inline-block;width:7px;height:7px;border-radius:50%;background:#32d9ff;margin-right:6px;box-shadow:0 0 12px rgba(50,217,255,.55)}
+
+.troubleSection{padding-top:26px}
+.troubleShell{overflow:hidden;border:1px solid rgba(79,163,255,.16);border-radius:26px;background:radial-gradient(circle at 78% 0,rgba(0,181,255,.09),transparent 30%),linear-gradient(145deg,rgba(5,19,42,.97),rgba(3,11,27,.98));box-shadow:0 28px 80px rgba(0,0,0,.23)}
+.troubleHead{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:24px;border-bottom:1px solid rgba(95,157,230,.11)}
+.troubleHead h2{margin:8px 0;font-size:clamp(22px,3vw,34px);line-height:1.1}
+.troubleHead p{max-width:760px;margin:0;color:#8da2bd;line-height:1.7;font-size:11px}
+.troubleBadge{flex:0 0 auto;padding:8px 11px;border:1px solid rgba(58,204,255,.22);border-radius:999px;background:rgba(18,121,194,.08);color:#8ee9ff;font-size:8px;font-weight:900;letter-spacing:.08em}
+.troubleBody{display:grid;grid-template-columns:270px minmax(0,1fr);min-height:520px}
+.troubleNav{padding:18px;border-right:1px solid rgba(95,157,230,.1);background:rgba(255,255,255,.012)}
+.troubleNav h3,.troubleMain h3{margin:0 0 11px;font-size:14px}
+.troubleDomains{display:grid;gap:8px}
+.troubleDomain{width:100%;display:flex;align-items:center;gap:10px;text-align:left;padding:11px 12px;border-radius:13px;border:1px solid rgba(74,147,230,.12);background:rgba(255,255,255,.02);color:#a8bad0;cursor:pointer;font:800 10px/1.2 inherit}
+.troubleDomain b{display:grid;place-items:center;width:31px;height:31px;border-radius:9px;background:linear-gradient(145deg,rgba(20,111,220,.4),rgba(26,219,255,.08));font-size:15px;flex:0 0 31px}
+.troubleDomain.active{color:#fff;border-color:rgba(62,194,255,.34);background:linear-gradient(145deg,rgba(14,74,145,.3),rgba(6,34,70,.3));box-shadow:0 12px 30px rgba(0,0,0,.14)}
+.troublePrivacy{margin-top:14px;padding:11px;border-radius:12px;background:rgba(23,173,255,.045);border:1px solid rgba(65,166,255,.1);color:#6f8aa7;font-size:8.5px;line-height:1.55}
+.troubleMain{min-width:0;padding:22px}
+.troubleIntro{display:grid;place-items:center;min-height:410px;text-align:center;padding:20px}
+.troubleIntroIcon{width:96px;height:96px;display:grid;place-items:center;border-radius:28px;background:linear-gradient(145deg,rgba(21,108,217,.26),rgba(18,210,255,.06));border:1px solid rgba(83,192,255,.19);font-size:42px;margin:0 auto 18px}
+.troubleIntro p{max-width:560px;color:#7d94af;font-size:11px;line-height:1.75}
+.troubleIssueGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.troubleIssue{min-width:0;padding:16px;border-radius:15px;border:1px solid rgba(83,155,235,.13);background:rgba(255,255,255,.02);cursor:pointer;color:#cbdcf0;text-align:left}
+.troubleIssue:hover{border-color:rgba(55,195,255,.32);background:rgba(30,126,216,.07)}
+.troubleIssue strong{display:block;font-size:12px;margin-bottom:5px;color:#f3f9ff}
+.troubleIssue span{display:block;font-size:9px;line-height:1.55;color:#718aa7}
+.troubleProgress{display:flex;gap:5px;margin-bottom:16px}.troubleProgress i{height:4px;flex:1;border-radius:4px;background:rgba(255,255,255,.06)}.troubleProgress i.done{background:linear-gradient(90deg,#258cff,#35dcff)}
+.troubleQuestion{padding:18px;border:1px solid rgba(82,160,245,.13);border-radius:16px;background:rgba(255,255,255,.018)}
+.troubleQuestion small{color:#61cbff;font-size:8px;font-weight:900;letter-spacing:.1em}.troubleQuestion h3{font-size:18px;line-height:1.3;margin:8px 0 14px}
+.troubleAnswers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.troubleAnswer{padding:12px;border:1px solid rgba(83,155,235,.14);border-radius:12px;background:rgba(4,20,42,.7);color:#b8cae0;text-align:left;font:750 9.5px/1.45 inherit;cursor:pointer}
+.troubleAnswer:hover{color:#fff;border-color:rgba(58,205,255,.3)}
+.troubleResult{display:grid;gap:12px}.troubleResultHero,.troubleResultCard{padding:17px;border:1px solid rgba(80,158,240,.13);border-radius:16px;background:rgba(255,255,255,.018)}
+.troubleResultHero{background:linear-gradient(145deg,rgba(13,76,151,.18),rgba(14,45,83,.08))}.troubleResultHero h3{font-size:20px;margin:7px 0}
+.troubleResultHero p,.troubleResultCard li{color:#8ba1ba;font-size:10px;line-height:1.7}.troubleResultCard h4{margin:0 0 8px;font-size:11px}.troubleResultCard ul{margin:0;padding-left:18px}
+.troubleActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.troubleBtn{appearance:none;display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 14px;border-radius:12px;border:1px solid rgba(78,171,255,.2);background:linear-gradient(145deg,#137ee9,#18bff3);color:white;font:850 9.5px/1.2 inherit;cursor:pointer;text-decoration:none}
+.troubleBtn.ghost{background:rgba(255,255,255,.025);color:#b8d1e9}
+.troubleSafety{padding:12px;border:1px solid rgba(255,184,76,.15);border-radius:13px;background:rgba(255,161,39,.045);color:#bca785;font-size:9px;line-height:1.65}
+@media(max-width:900px){.troubleBody{grid-template-columns:1fr}.troubleNav{border-right:0;border-bottom:1px solid rgba(95,157,230,.1)}.troubleDomains{grid-template-columns:repeat(5,minmax(0,1fr))}.troubleDomain{justify-content:center;padding:9px 5px}.troubleDomain span{display:none}}
+@media(max-width:620px){.troubleShell{border-radius:19px}.troubleHead{padding:16px;display:block}.troubleBadge{display:inline-flex;margin-top:12px}.troubleNav,.troubleMain{padding:13px}.troubleDomain b{width:29px;height:29px;flex-basis:29px}.troubleIssueGrid,.troubleAnswers{grid-template-columns:1fr}.troubleIntro{min-height:300px}.troubleActions{display:grid;grid-template-columns:1fr}.troubleBtn{width:100%}.voiceAssistantDock{display:grid;grid-template-columns:1fr 1fr}.voiceStatus{grid-column:1/-1}.voiceBtn{width:100%}}
+@media(max-width:360px){.troubleDomains{grid-template-columns:repeat(3,minmax(0,1fr))}.voiceAssistantDock{grid-template-columns:1fr}}
