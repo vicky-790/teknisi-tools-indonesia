@@ -1,4 +1,5 @@
 import {apiJson as secureJson,sameOrigin,securityRateLimit} from '../_lib/security.js';
+import {runtimeEnabled} from '../_lib/critical.js';
 
 const MODEL="@cf/google/gemma-4-26b-a4b-it",MAX_BODY=2600000,MAX_IMAGE_DATA_URL=2050000;
 function json(data,status=200,headers={}){return secureJson(data,status,headers)}
@@ -35,10 +36,11 @@ async function direct(ai,img,prompt){return await ai.run(MODEL,{messages:[{role:
 async function fallback(ai,parsed,prompt){const c=await ai.toMarkdown({name:`upload.${parsed.mime.split("/")[1]||"jpg"}`,blob:new Blob([parsed.bytes],{type:parsed.mime})},{conversionOptions:{output:{format:"text"}}}),one=Array.isArray(c)?c[0]:c,vision=one?.data||"";const response=await ai.run(MODEL,{messages:[{role:"system",content:SYSTEM},{role:"user",content:`IMAGE DESCRIPTION / OCR DARI VISION PIPELINE:\n${clean(vision,7000)}\n\nUSER CONTEXT:\n${prompt}`}],max_tokens:1800,temperature:.12,chat_template_kwargs:{enable_thinking:false}},{rejectIfBusy:true});return response}
 export async function onRequest(context){
  const req=context.request;
- if(req.method==="GET")return json({ok:true,configured:!!context.env.AI,model:MODEL,storage:false,security:"v2.6"});
+ if(req.method==="GET"){const enabled=await runtimeEnabled(context.env,"ai_vision_enabled",true);return json({ok:true,configured:!!context.env.AI,enabled,model:MODEL,storage:false,security:"v2.8.6"});}
  if(req.method==="OPTIONS")return new Response(null,{status:204,headers:{Allow:"GET, POST, OPTIONS","Cache-Control":"no-store"}});
  if(req.method!=="POST")return json({ok:false,error:"method_not_allowed"},405,{"Allow":"GET, POST, OPTIONS"});
  if(!sameOrigin(req))return json({ok:false,error:"cross_origin_forbidden"},403);
+ if(!(await runtimeEnabled(context.env,"ai_vision_enabled",true)))return json({ok:false,error:"feature_disabled",message:"AI Vision sedang dinonaktifkan sementara oleh Owner."},503);
  if(!context.env.AI)return json({ok:false,error:"ai_binding_not_configured",message:"AI Vision belum dikonfigurasi."},503);
  const rl10=await securityRateLimit(context,"ai-vision-10m",{limit:20,windowSec:600,blockSec:900});
  if(!rl10.allowed)return json({ok:false,error:"rate_limited",message:"Terlalu banyak permintaan AI. Coba lagi beberapa saat."},429,{"Retry-After":String(rl10.retryAfter)});

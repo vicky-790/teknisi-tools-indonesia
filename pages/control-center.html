@@ -3,7 +3,7 @@
 <title>Secure Control Center | Teknisi Tools Indonesia</title>
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/assets/control-center-v283.css?v=283"><link rel="stylesheet" href="/assets/control-center-v284.css?v=284"><link rel="stylesheet" href="/assets/control-center-v285.css?v=2851">
+<link rel="stylesheet" href="/assets/control-center-v283.css?v=283"><link rel="stylesheet" href="/assets/control-center-v284.css?v=284"><link rel="stylesheet" href="/assets/control-center-v285.css?v=2851"><link rel="stylesheet" href="/assets/control-center-v286.css?v=286">
 </head><body class="ccBody">
 <div class="bootGate" id="bootGate"><div class="bootSpinner"></div><b>Memverifikasi secure session…</b></div>
 
@@ -11,14 +11,14 @@
   <aside class="sidePanel">
     <div class="brandBlock">
       <img src="/assets/tti-control-logo.jpg?v=283" alt="Teknisi Tools Indonesia">
-      <div><b>CONTROL CENTER</b><span>V2.8.5.1 • Content & Monetization Center</span></div>
+      <div><b>CONTROL CENTER</b><span>V2.8.6 • Owner Critical Control</span></div>
     </div>
 
     <nav class="sideNav">
       <button class="active" type="button" data-view="overview">▦ <span>Overview</span></button>
       <button type="button" data-view="analytics">⌁ <span>Analytics</span></button>
       <button type="button" data-view="operations">⚙ <span>Operations</span></button><button type="button" data-view="health">● <span>Health</span></button><button type="button" data-view="seo">◎ <span>SEO</span></button><button type="button" data-view="ai">✦ <span>AI Usage</span></button><button type="button" data-view="release">↟ <span>Release</span></button><button type="button" data-view="content">▤ <span>Content</span></button><button type="button" data-view="links">↔ <span>Links</span></button><button type="button" data-view="monetization">Rp <span>Monetize</span></button><button type="button" data-view="flags">◫ <span>Flags</span></button>
-      <button class="ownerOnly" type="button" data-view="security">◇ <span>Security</span></button>
+      <button class="ownerOnly" type="button" data-view="critical">⚠ <span>Critical</span></button><button class="ownerOnly" type="button" data-view="security">◇ <span>Security</span></button>
       <button class="ownerOnly" type="button" data-view="audit">◷ <span>Audit Log</span></button>
     </nav>
 
@@ -71,6 +71,14 @@
 <section class="ccView" id="view-links" hidden><div class="cmToolbar"><div><span class="eyebrow">ADMIN + OWNER</span><h2>Internal Link Audit</h2></div><button id="refreshLinks">Run Audit</button></div><div class="cmStats"><article class="cmStat"><small>SCANNED</small><b id="linkScanned">-</b></article><article class="cmStat"><small>AVG LINKS</small><b id="linkAvg">-</b></article><article class="cmStat"><small>LOW-LINK</small><b id="linkThin">-</b></article><article class="cmStat"><small>ERRORS</small><b id="linkErrors">-</b></article></div><div class="cmPanel wide" style="margin-top:12px"><div id="linkIssues" class="cmList"></div><div id="linkNote" class="cmNote"></div></div></section>
 <section class="ccView" id="view-monetization" hidden><div class="cmToolbar"><div><span class="eyebrow">ADMIN + OWNER</span><h2>Monetization Center</h2></div><button id="refreshMonetization">Refresh</button></div><div class="cmStats"><article class="cmStat"><small>ADS MODE</small><b id="monMode">-</b></article><article class="cmStat"><small>PUBLISHER</small><b id="monPublisher" style="font-size:13px">-</b></article><article class="cmStat"><small>ADS.TXT</small><b id="monAdsTxt">-</b></article><article class="cmStat"><small>PRIVACY</small><b id="monPrivacy">-</b></article></div><div class="cmGrid" style="margin-top:12px"><article class="cmPanel"><div id="monChecks" class="cmList"></div></article><article class="cmPanel"><div class="moneyBox"><strong id="rpmEstimate">Rp0</strong><span>estimasi lokal, bukan data aktual AdSense</span></div><div class="moneyCalc"><label>Pageviews/bulan<input id="rpmPageviews" type="number" value="10000"></label><label>RPM (Rp)<input id="rpmValue" type="number" value="10000"></label></div></article><article class="cmPanel wide"><div id="monNote" class="cmNote"></div></article></div></section>
 <section class="ccView" id="view-flags" hidden><div class="cmToolbar"><div><span class="eyebrow">ADMIN + OWNER</span><h2>Feature Flags</h2></div><button id="refreshFlags">Refresh Flags</button></div><div id="flagGrid" class="switchGrid"></div><div id="flagNote" class="cmNote"></div></section>
+<section class="ccView" id="view-critical" hidden>
+<div class="criticalHero"><span class="eyebrow">OWNER ONLY - CRITICAL CONTROL</span><h2>Production Critical Actions</h2><p>Aksi di halaman ini membutuhkan Owner session + re-auth OWNER_TOKEN. Step-up hanya berlaku 5 menit dan seluruh perubahan dicatat ke security audit.</p><div class="criticalGate"><input id="ownerReauthToken" type="password" autocomplete="current-password" placeholder="Re-enter OWNER_TOKEN"><button id="ownerReauthBtn" type="button">Re-auth Owner</button></div><div class="criticalState"><span>STEP-UP AUTH</span><b id="stepState">REQUIRED</b></div><div id="criticalMsg" class="criticalMsg"></div></div>
+<div class="criticalGrid">
+<article class="criticalCard"><span class="eyebrow">PRODUCTION</span><h3>Maintenance Mode</h3><p>Jika ON, visitor publik menerima halaman maintenance HTTP 503. Control Center, login, API, dan statistik admin tetap dapat diakses.</p><div class="criticalState"><span>CURRENT STATE</span><b id="maintenanceState">-</b></div><div class="criticalActions"><button id="maintenanceOn" class="criticalBtn warn">Enable Maintenance</button><button id="maintenanceOff" class="criticalBtn">Disable Maintenance</button></div></article>
+<article class="criticalCard"><span class="eyebrow">AI CONTROL</span><h3>AI Vision Runtime</h3><p>Emergency kill switch untuk endpoint AI Vision. OFF tidak menghapus konfigurasi AI dan bisa dinyalakan kembali oleh Owner.</p><div class="criticalState"><span>AI VISION</span><b id="aiCriticalState">-</b></div><div class="criticalActions"><button id="aiOff" class="criticalBtn danger">Disable AI Vision</button><button id="aiOn" class="criticalBtn">Enable AI Vision</button></div></article>
+<article class="criticalCard"><span class="eyebrow">STEP-UP</span><h3>Clear Elevated Session</h3><p>Hapus step-up cookie lebih cepat setelah selesai melakukan critical action.</p><div class="criticalActions"><button id="clearStep" class="criticalBtn">Clear Step-up</button></div></article>
+<article class="criticalCard"><span class="eyebrow">MFA FOUNDATION</span><h3>Second Factor Readiness</h3><div class="criticalState"><span>MFA STATUS</span><b id="mfaState">FOUNDATION ONLY</b></div><div class="mfaBox">V2.8.6 hanya menyiapkan pola step-up/re-auth untuk aksi sensitif. Belum ada TOTP/WebAuthn/Cloudflare Access second factor aktif, jadi panel tidak mengklaim MFA sudah berjalan.</div></article>
+</div></section>
     <section class="ccView" id="view-security" hidden>
       <article class="glassPanel"><span class="eyebrow">OWNER ONLY</span><h2>Security posture</h2><div class="statusList" id="ownerPosture"></div></article>
     </section>
@@ -81,5 +89,5 @@
   </section>
 </main>
 
-<script src="/assets/control-center-v284.js?v=284" defer></script><script src="/assets/control-center-v285.js?v=2851" defer></script>
+<script src="/assets/control-center-v284.js?v=284" defer></script><script src="/assets/control-center-v285.js?v=2851" defer></script><script src="/assets/control-center-v286.js?v=286" defer></script>
 </body></html>
