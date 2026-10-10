@@ -1,4 +1,4 @@
-const CACHE = 'tti-v2922-injection-premium-mobile-ui';
+const CACHE = 'tti-v300-seo-growth-distribution';
 const CORE = ['/', '/assets/style.css', '/assets/analytics.js', '/assets/events.js', '/assets/stats.js', '/assets/monetization-config.js', '/assets/monetization.js', '/assets/troubleshooting-v27.css', '/assets/troubleshooting-v27.js', '/assets/civil-icons-v271.css', '/assets/job-report-v28.css', '/assets/job-report-v28.js', '/assets/job-storage-v281.css', '/assets/job-storage-v281.js'];
 
 self.addEventListener('install', event => {

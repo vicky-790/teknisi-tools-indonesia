@@ -3,7 +3,7 @@
 <title>Secure Control Center | Teknisi Tools Indonesia</title>
 <meta name="robots" content="noindex,nofollow,noarchive"><meta name="referrer" content="no-referrer">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/assets/control-center-v283.css?v=283"><link rel="stylesheet" href="/assets/control-center-v284.css?v=284"><link rel="stylesheet" href="/assets/control-center-v285.css?v=2851"><link rel="stylesheet" href="/assets/control-center-v286.css?v=286">
+<link rel="stylesheet" href="/assets/control-center-v283.css?v=283"><link rel="stylesheet" href="/assets/control-center-v284.css?v=284"><link rel="stylesheet" href="/assets/control-center-v285.css?v=2851"><link rel="stylesheet" href="/assets/control-center-v286.css?v=286"><link rel="stylesheet" href="/assets/control-center-v300.css?v=300">
 </head><body class="ccBody">
 <div class="bootGate" id="bootGate"><div class="bootSpinner"></div><b>Memverifikasi secure session…</b></div>
 
@@ -11,13 +11,13 @@
   <aside class="sidePanel">
     <div class="brandBlock">
       <img src="/assets/tti-control-logo.jpg?v=283" alt="Teknisi Tools Indonesia">
-      <div><b>CONTROL CENTER</b><span>V2.8.6 • Owner Critical Control</span></div>
+      <div><b>CONTROL CENTER</b><span>V3.0 • SEO Growth & Distribution</span></div>
     </div>
 
     <nav class="sideNav">
       <button class="active" type="button" data-view="overview">▦ <span>Overview</span></button>
       <button type="button" data-view="analytics">⌁ <span>Analytics</span></button>
-      <button type="button" data-view="operations">⚙ <span>Operations</span></button><button type="button" data-view="health">● <span>Health</span></button><button type="button" data-view="seo">◎ <span>SEO</span></button><button type="button" data-view="ai">✦ <span>AI Usage</span></button><button type="button" data-view="release">↟ <span>Release</span></button><button type="button" data-view="content">▤ <span>Content</span></button><button type="button" data-view="links">↔ <span>Links</span></button><button type="button" data-view="monetization">Rp <span>Monetize</span></button><button type="button" data-view="flags">◫ <span>Flags</span></button>
+      <button type="button" data-view="operations">⚙ <span>Operations</span></button><button type="button" data-view="health">● <span>Health</span></button><button type="button" data-view="seo">◎ <span>SEO</span></button><button type="button" data-view="growth">↑ <span>Growth</span></button><button type="button" data-view="ai">✦ <span>AI Usage</span></button><button type="button" data-view="release">↟ <span>Release</span></button><button type="button" data-view="content">▤ <span>Content</span></button><button type="button" data-view="links">↔ <span>Links</span></button><button type="button" data-view="monetization">Rp <span>Monetize</span></button><button type="button" data-view="flags">◫ <span>Flags</span></button>
       <button class="ownerOnly" type="button" data-view="critical">⚠ <span>Critical</span></button><button class="ownerOnly" type="button" data-view="security">◇ <span>Security</span></button>
       <button class="ownerOnly" type="button" data-view="audit">◷ <span>Audit Log</span></button>
     </nav>
@@ -65,6 +65,23 @@
 
 <section class="ccView" id="view-health" hidden><div class="adminToolbar"><div><span class="eyebrow">ADMIN + OWNER</span><h2>System Health</h2></div><button id="refreshHealth">Refresh Health</button></div><div class="healthCards"><article class="healthCard"><small>D1 DATABASE</small><b id="hD1">-</b><span>live query</span></article><article class="healthCard"><small>WORKERS AI</small><b id="hAI">-</b><span>binding</span></article><article class="healthCard"><small>D1 LATENCY</small><b id="hLatency">-</b><span>probe</span></article><article class="healthCard"><small>RATE ROWS</small><b id="hRate">-</b><span>security table</span></article></div><div class="adminPanel wide" style="margin-top:12px"><div id="healthSummary" class="adminList"></div></div></section>
 <section class="ccView" id="view-seo" hidden><div class="adminToolbar"><div><span class="eyebrow">ADMIN + OWNER</span><h2>SEO Center</h2></div><button id="refreshSeo">Run Checks</button></div><div class="adminGrid"><article class="adminPanel"><div class="seoScore"><strong id="seoScoreNum">-</strong><div><b>Live SEO checks</b><span id="seoScoreText">Waiting...</span></div></div></article><article class="adminPanel"><span class="eyebrow">SITEMAP</span><h2><span id="seoUrlCount">-</span> URLs</h2><p>Private Control Center tetap dikeluarkan dari sitemap publik.</p></article><article class="adminPanel wide"><div id="seoChecks" class="adminList"></div><p id="seoNote"></p></article></div></section>
+<section class="ccView" id="view-growth" hidden>
+<div class="growthHero"><span class="eyebrow">V3.0 • SEO GROWTH & DISTRIBUTION</span><h2>Turn usage signals into growth actions.</h2><p>Dashboard ini memakai analytics anonim milik TTI, on-site search, share activity, trending tools dan internal-link audit. Data Google Search Console tidak ditebak di sini.</p><div class="growthActions"><button id="refreshGrowth" type="button">Refresh Growth Signals</button></div></div>
+<div class="growthStats">
+ <article class="growthStat"><small>7D PAGE VIEWS</small><b id="gViews">-</b><span>first-party analytics</span></article>
+ <article class="growthStat"><small>7D CALCULATIONS</small><b id="gCalc">-</b><span id="gCalcRate">-</span></article>
+ <article class="growthStat"><small>7D SHARES</small><b id="gShares">-</b><span id="gShareRate">-</span></article>
+ <article class="growthStat"><small>30D SESSIONS</small><b id="gSessions">-</b><span>anonymous sessions</span></article>
+</div>
+<div class="growthGrid">
+ <article class="growthPanel"><span class="eyebrow">TRENDING TOOLS • 7D</span><h3>What users actually use</h3><div id="growthTools" class="growthList"></div></article>
+ <article class="growthPanel"><span class="eyebrow">ACQUISITION • 30D</span><h3>Traffic source mix</h3><div id="growthSources" class="growthList"></div></article>
+ <article class="growthPanel"><span class="eyebrow">CONTENT OPPORTUNITY</span><h3>On-site search → page mapping</h3><div id="growthDemand" class="growthList"></div></article>
+ <article class="growthPanel"><span class="eyebrow">DISTRIBUTION</span><h3>Most shared pages/results</h3><div id="growthShares" class="growthList"></div></article>
+ <article class="growthPanel"><span class="eyebrow">TOP CONTENT • 30D</span><h3>Pages already earning attention</h3><div id="growthPages" class="growthList"></div></article>
+ <article class="growthPanel"><span class="eyebrow">INTERNAL LINK OPPORTUNITY</span><h3>Low-link pages to strengthen</h3><div id="growthLinks" class="growthList"></div></article>
+ <article class="growthPanel wide"><div id="growthCaveat" class="growthNote"></div></article>
+</div></section>
 <section class="ccView" id="view-ai" hidden><div class="adminToolbar"><div><span class="eyebrow">ADMIN + OWNER</span><h2>AI Usage Monitor</h2></div><button id="refreshAi">Refresh AI</button></div><div class="healthCards"><article class="healthCard"><small>AI BINDING</small><b id="aiBinding">-</b></article><article class="healthCard"><small>RATE WINDOWS</small><b id="aiRows">-</b></article><article class="healthCard"><small>RECORDED HITS</small><b id="aiHits">-</b></article><article class="healthCard"><small>MODEL</small><b style="font-size:11px">@cf/google/gemma</b></article></div><div class="adminPanel wide" style="margin-top:12px"><div id="aiWindows" class="adminList"></div><p id="aiPrivacy"></p></div></section>
 <section class="ccView" id="view-release" hidden><div class="adminToolbar"><div><span class="eyebrow">ADMIN + OWNER</span><h2>Release Info</h2></div><button id="refreshRelease">Refresh Release</button></div><article class="adminPanel wide"><div id="releaseInfo"></div></article></section>
 <section class="ccView" id="view-content" hidden><div class="cmToolbar"><div><span class="eyebrow">ADMIN + OWNER</span><h2>Content Center</h2></div><button id="refreshContent">Refresh Inventory</button></div><div class="cmStats"><article class="cmStat"><small>TOTAL URL</small><b id="ctTotal">-</b></article><article class="cmStat"><small>ARTICLES</small><b id="ctArticles">-</b></article><article class="cmStat"><small>ANSWERS</small><b id="ctAnswers">-</b></article><article class="cmStat"><small>PAGES</small><b id="ctPages">-</b></article></div><div class="cmGrid" style="margin-top:12px"><article class="cmPanel"><div id="contentBars" class="contentBars"></div></article><article class="cmPanel"><div id="contentRecent" class="cmList"></div></article><article class="cmPanel wide"><div id="contentNote" class="cmNote"></div></article></div></section>
@@ -89,5 +106,5 @@
   </section>
 </main>
 
-<script src="/assets/control-center-v284.js?v=284" defer></script><script src="/assets/control-center-v285.js?v=2851" defer></script><script src="/assets/control-center-v286.js?v=286" defer></script>
+<script src="/assets/control-center-v284.js?v=284" defer></script><script src="/assets/control-center-v285.js?v=2851" defer></script><script src="/assets/control-center-v286.js?v=286" defer></script><script src="/assets/control-center-v300.js?v=300" defer></script>
 </body></html>

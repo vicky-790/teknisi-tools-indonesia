@@ -3,7 +3,7 @@ let schemaReady = false;
 const ALLOWED = new Set([
   'page_view','calculator_open','calculate','copy_result','article_open',
   'tools_click','knowledge_click','pwa_install','cta_click','site_search',
-  'geo_granted','geo_denied','geo_unavailable','affiliate_click'
+  'geo_granted','geo_denied','geo_unavailable','affiliate_click','share_result'
 ]);
 const BASE_SCHEMA=`CREATE TABLE IF NOT EXISTS analytics_events(id INTEGER PRIMARY KEY AUTOINCREMENT,created_at TEXT NOT NULL,day_jakarta TEXT NOT NULL,event_type TEXT NOT NULL,path TEXT NOT NULL,label TEXT NOT NULL DEFAULT '',session_id TEXT NOT NULL DEFAULT '');CREATE INDEX IF NOT EXISTS idx_analytics_day ON analytics_events(day_jakarta);CREATE INDEX IF NOT EXISTS idx_analytics_type_day ON analytics_events(event_type,day_jakarta);CREATE INDEX IF NOT EXISTS idx_analytics_path_type ON analytics_events(path,event_type);`;
 const EXTRA_COLUMNS = {

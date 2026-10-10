@@ -1,4 +1,4 @@
-/* Teknisi Tools Indonesia V1.7.2 — anonymous events + dual geolocation.
+/* Teknisi Tools Indonesia V3.0 — anonymous events + dual geolocation.
    Network location is derived server-side by Cloudflare. Precise GPS is OPTIONAL,
    requested only after an explicit click, and never required to use the calculators. */
 (function(){
@@ -18,3 +18,6 @@ function showPrompt(){if(document.getElementById('ttiGeoPrompt'))return;var box=
 function geoBoot(){if(!navigator.geolocation||!window.isSecureContext)return;var choice=get('tti_geo_choice'),last=Number(get('tti_geo_last_sent')||0),promptAt=Number(get('tti_geo_prompt_at')||0);if(choice==='granted'){if(now()-last>86400000){if(navigator.permissions&&navigator.permissions.query){navigator.permissions.query({name:'geolocation'}).then(function(p){if(p.state==='granted')locate(true);else if(p.state==='prompt')showPrompt();else set('tti_geo_choice','denied')}).catch(function(){showPrompt()})}else showPrompt()}return}if(choice==='denied')return;if(promptAt&&now()-promptAt<30*86400000)return;setTimeout(showPrompt,1800)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',geoBoot);else geoBoot();
 })();
+
+/* V3.0 Growth Distribution loader */
+(function(){try{var s=document.createElement('script');s.src='/assets/growth-distribution-v300.js?v=300';s.defer=true;document.head.appendChild(s)}catch(e){}})();
