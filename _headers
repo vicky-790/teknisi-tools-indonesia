@@ -111,3 +111,6 @@
 
 /assets/control-center-v300.js
   Cache-Control: no-cache, no-store, must-revalidate
+
+/assets/content-value-v301.css
+  Cache-Control: public, max-age=604800
